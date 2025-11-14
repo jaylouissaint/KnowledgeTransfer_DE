@@ -20,7 +20,7 @@ VALUES (%s, %s, %s, %s, %s, %s)
 
 # --- UPDATE ---
 UPDATE_INSTITUTIONS = """
-UPDATE users
+UPDATE Institutions
 SET age = ?
 WHERE name = ?
 """
@@ -47,7 +47,7 @@ INSERT_IPEDS = """
 INSERT INTO Financials
     (OPEID, YEAR, TUITIONFEE_IN, TUITIONFEE_OUT, TUITIONFEE_PROG,
      TUITFTE, AVGFASCAL, CDR2, CDR3)
-VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
 """
 
 # --- UPDATE ---
@@ -83,9 +83,9 @@ CREATE TABLE IF NOT EXISTS Academics (
 # --- INSERT ---
 INSERT_ACADEMICS = """
 INSERT INTO Academics
-    (ACADID, OPEID, YEAR, ADM_RATE, C100_4, C100_L4, SAT_AVG,
-     COUNT_NWNE_3YR, CNTOVER150_3YR, CNTOVER150_3YR)
-VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    (OPEID, YEAR, ADM_RATE, C100_4, C100_L4, SAT_AVG,
+     COUNT_NWNE_3YR, COUNT_WNE_3YR, CNTOVER150_3YR)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
 """
 
 # --- UPDATE ---

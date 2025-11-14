@@ -41,19 +41,9 @@ def create_table(query):
     table_name = query.split("(")[0].strip().split()[-1]
     try:
         with conn.cursor() as cur:
-            # Check if table already exists
-            cur.execute("""
-                        SELECT EXISTS(SELECT FROM information_schema.tables
-                        WHERE table_schema = 'public' AND table_name = %s);
-                        """, (table_name.lower(),))
-            exists = cur.fetchone()[0]
-
-            if exists:
-                print(f"Table {table_name} already exist. Skipping creation.")
-            else:
-                cur.execute(query)
-                conn.commit()
-                print(f"Successfully created the '{table_name}' table.")
+            cur.execute(query)
+            conn.commit()
+            print(f"{table_name} table created or already exists.")
     except psycopg.errors.DatabaseError as e:
         print(f"Database error occurred: {e}")
     except Exception as e:
@@ -81,9 +71,91 @@ def insert_data(query, df):
     try:
         with conn.transaction():
             cur.executemany(query, df.values.tolist())
-            print(f"{df.shape[0]} rows successfully loaded into {table_name}.")
+            print(f"{cur.rowcount} rows loaded into {table_name}.")
     except Exception as e:
         print("Error inserting data: ", e)
     finally:
         cur.close()
         conn.close()
+
+
+def update_row(query, df):
+    """
+    Updates one or multiple row(s) of data
+    using the given SQL query.
+
+    Parameters
+    ----------
+    query : str
+        SQL UPDATE statement
+    df : pandas.DataFrame
+        Clean data to update existing row
+    """
+    conn = get_connection()
+    cur = conn.cursor()
+    table_name = query.split("(")[0].strip().split()[-1]
+    try:
+        with conn.transaction():
+            cur.executemany(query, df.values.tolist())
+            print(f"Successfully updated {cur.rowcount} rows in {table_name}.")
+    except Exception as e:
+        print("Error updating data: ", e)
+    finally:
+        cur.close()
+        conn.close()
+
+
+def delete_row(query):
+    """
+    Deletes one or multiple row(s) of data
+    using the given SQL query.
+
+    Parameters
+    ----------
+    query : str
+        SQL UPDATE statement
+    """
+    conn = get_connection()
+    cur = conn.cursor()
+    table_name = query.split("(")[0].strip().split()[-1]
+    try:
+        with conn.transaction():
+            cur.executemany(query)
+            print(f"Successfully deleted {cur.rowcount} rows in {table_name}.")
+    except Exception as e:
+        print("Error deleting data: ", e)
+    finally:
+        cur.close()
+        conn.close()
+
+
+def generate_update_query(table_name, pk_column, df_columns):
+    """
+    Create an UPDATE SQL query string dynamically from column names.
+    Excludes the primary key from the SET clause.
+    """
+    set_columns = [col for col in df_columns if col != pk_column]
+    set_clause = ", ".join([f"{col} = %s" for col in set_columns])
+
+    query = f"""
+        UPDATE {table_name}
+        SET {set_clause}
+        WHERE {pk_column} = %s
+    """
+    return query, set_columns
+
+
+def generate_delete_query(table_name, pk_column, df_columns):
+    """
+    Create an UPDATE SQL query string dynamically from column names.
+    Excludes the primary key from the SET clause.
+    """
+    set_columns = [col for col in df_columns if col != pk_column]
+    set_clause = ", ".join([f"{col} = %s" for col in set_columns])
+
+    query = f"""
+        UPDATE {table_name}
+        SET {set_clause}
+        WHERE {pk_column} = %s
+    """
+    return query, set_columns

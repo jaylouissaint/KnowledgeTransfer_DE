@@ -1,6 +1,10 @@
 
 
 def clean_institutions(df):
+    """
+    Input: Raw dataframe from college-scorecard csv\n
+    Output: Cleaned dataframe containing columns for the Institutions table
+    """
 
     # Specify columns that are needed in this table
     main_cols = ['OPEID', 'UNITID', 'PREDDEG', 'HIGHDEG', 'CONTROL', 'REGION']
@@ -64,6 +68,10 @@ def clean_institutions(df):
 
 
 def clean_financials(df, year):
+    """
+    Input: Raw dataframe from college-scorecard csv and the YEAR of the data\n
+    Output: Cleaned dataframe containing columns for the Financials table
+    """
     df['YEAR'] = year
 
     # Specify columns that are needed in this table
@@ -84,6 +92,10 @@ def clean_financials(df, year):
 
 
 def clean_academics(df, year):
+    """
+    Input: Raw dataframe from college-scorecard csv and the YEAR of the data\n
+    Output: Cleaned dataframe containing columns for the Academics table
+    """
     df['YEAR'] = year
 
     # Specify columns that are needed in this table
@@ -104,6 +116,10 @@ def clean_academics(df, year):
 
 
 def clean_demographics(df, year):
+    """
+    Input: Raw dataframe from college-scorecard csv and the YEAR of the data\n
+    Output: Cleaned dataframe containing columns for the Demographics table
+    """
     df['YEAR'] = year
 
     # Specify columns that are needed in this table

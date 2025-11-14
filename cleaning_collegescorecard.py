@@ -1,4 +1,7 @@
-
+"""
+Functions to transform raw dataframe from college scorecard csv\n
+into insert-ready dataframe for different tables.
+"""
 
 def clean_institutions(df):
     """

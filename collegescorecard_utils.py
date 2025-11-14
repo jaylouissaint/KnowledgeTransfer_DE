@@ -35,13 +35,40 @@ def create_table(query):
     table_name = query.split("(")[0].strip().split()[-1]
     try:
         with conn.cursor() as cur:
-            cur.execute(query)
-        conn.commit()
-        print(f"Successfully created the {table_name} table.")
+            # Check if table already exists
+            cur.execute("""
+                        SELECT EXISTS(SELECT FROM information_schema.tables
+                        WHERE table_schema = 'public' AND table_name = %s);
+                        """, (table_name.lower(),))
+            exists = cur.fetchone()[0]
+
+            if exists:
+                print(f"Table {table_name} already exist. Skipping creation.")
+            else:
+                cur.execute(query)
+                conn.commit()
+                print(f"Successfully created the '{table_name}' table.")
     except psycopg.errors.DatabaseError as e:
         print(f"Database error occurred: {e}")
     except Exception as e:
         print(f"Non-Database error occurred: {e}")
+    finally:
+        cur.close()
+        conn.close()
+
+
+def insert_data(query, df):
+    conn = get_connection()
+    cur = conn.cursor()
+    table_name = query.split("(")[0].strip().split()[-1]
+    try:
+        with conn.transaction():
+            cur.executemany(query, df.values.tolist())
+            cur.execute(f"SELECT COUNT(*) FROM {table_name}")
+            rows = cur.fetchone[0]
+            print(f"{rows} rows successfully loaded into table.")
+    except Exception as e:
+        print("Error inserting data", e)
     finally:
         cur.close()
         conn.close()

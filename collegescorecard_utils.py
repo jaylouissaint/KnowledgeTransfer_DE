@@ -31,6 +31,12 @@ def load_data(path_file):
 
 
 def create_table(query):
+    """
+    Runs a CREATE TABLE SQL query from sql_queries.py.
+
+    query: str
+        Full SQL statement defining the table structure.
+    """
     conn = get_connection()
     table_name = query.split("(")[0].strip().split()[-1]
     try:
@@ -58,17 +64,26 @@ def create_table(query):
 
 
 def insert_data(query, df):
+    """
+    Insert multiple rows of data from a DataFrame
+    into a table using the given SQL query.
+
+    Parameters
+    ----------
+    query : str
+        SQL INSERT statement from sql_queries.py.
+    df : pandas.DataFrame
+        Clean data to insert; each row corresponds to the placeholders.
+    """
     conn = get_connection()
     cur = conn.cursor()
     table_name = query.split("(")[0].strip().split()[-1]
     try:
         with conn.transaction():
             cur.executemany(query, df.values.tolist())
-            cur.execute(f"SELECT COUNT(*) FROM {table_name}")
-            rows = cur.fetchone[0]
-            print(f"{rows} rows successfully loaded into table.")
+            print(f"{df.shape[0]} rows successfully loaded into {table_name}.")
     except Exception as e:
-        print("Error inserting data", e)
+        print("Error inserting data: ", e)
     finally:
         cur.close()
         conn.close()

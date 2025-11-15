@@ -17,38 +17,24 @@ def clean_directory(df):
     id_cols = ['UNITID']
     main_cols = [
         'INSTNM',    # Institution name
-        'IALIAS',    # Alias
         'ADDR',      # Street address
         'CITY',
         'STABBR',    # State abbreviation
         'ZIP',
-        'FIPS',
-        'OBEREG',
-        'CHFNM',     # Chief executive name
-        'CHFTITLE',  # Title
-        'GENTELE',   # General phone
-        'EIN',
-        'DUNS',
-        'OPEID',
-        'OPEFLAG',
-        'WEBADDR',
-        'ADMINURL',
-        'FAIDURL',
-        'APPLURL',
-        'NPRICURL',
-        'VETURL',
-        'ATHURL',
-        'DISAURL',
-        'SECTOR',
-        'ICLEVEL',
-        'CONTROL',
-        'LOCALE',
-        'COUNTYCD',
-        'COUNTYNM',
         'LONGITUD',
-        'LATITUDE'
+        'LATITUDE',
+        'C21BASIC',
+        '21IPUG',
+        'C21UGPRF',
+        'C21ENPRF',
+        'C21SZSET',
+        'CSA',
+        'CBSA',
+        'CBSATYPE',
+        'FIPS',
+        'COUNTYCD'
     ]
-
+ 
     try:
         # Obtain relevant columns
         sub_df = df[id_cols + main_cols].copy()

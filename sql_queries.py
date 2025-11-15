@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS Institutions(
 INSERT_INSTITUTIONS = """
 INSERT INTO Institutions (OPEID, UNITID, ACCREDAGENCY, PREDDEG,
                           HIGHDEG, CONTROL, REGION)
-VALUES (%s, %s, %s, %s, %s, %s)
+VALUES (%s, %s, %s, %s, %s, %s, %s)
 """
 
 # --- UPDATE ---

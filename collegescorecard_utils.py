@@ -3,6 +3,7 @@ create, load, update, and delete college score card data'''
 import pandas as pd
 import psycopg
 import credentials as cred
+import os
 
 
 def get_connection():
@@ -18,13 +19,39 @@ def get_connection():
     return conn
 
 
-def load_data(path_file):
+def load_data(path_file, year):
     '''
-    This function takes in a CSV file and loads it into a pandas DataFrame
+    This function takes in a CSV file and year and returns a pandas DataFrame.
+    Only rows with non-missing dataframe are returned.
+    Rows missing required fields are saved and outputted into csv file.
     '''
     try:
         data = pd.read_csv(path_file)
-        return data
+
+        # Add a year column
+        data['YEAR'] = year
+
+        # Split data into complete and missing
+        # We only care if specific required columns are missing
+        required_cols = ["OPEID", "UNITID"]
+        complete_data = data.dropna(subset=required_cols)
+        missing_data = data[data[required_cols].isna().any(axis=1)]
+        missing_rows = missing_data.shape[0]
+
+        if missing_rows != 0:
+            # Folder to save missing data
+            folder = "Invalid_data"
+            os.makedirs(folder, exist_ok=True)
+
+            # Create a descriptive file name
+            file_name = f"college_scorecard_missing_{year}.csv"
+            file_path = os.path.join(folder, file_name)
+
+            # missing data is saved and outputted
+            missing_data.to_csv(file_path, index=False)
+            print(f"{missing_rows} missing rows saved to {file_path}.")
+
+        return complete_data
     except Exception as e:
         print(f"Error occured loading data: {e}")
         raise

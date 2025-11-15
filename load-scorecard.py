@@ -24,7 +24,7 @@ def main():
         scorecard_data = utils.load_data(filename)
 
         # clean data
-        institutions_clean = clean_cs.clean_institutions(scorecard_data)
+        institutions_clean = clean_cs.clean_institutions(scorecard_data, year)
         academics_clean = clean_cs.clean_academics(scorecard_data, year)
         demographics_clean = clean_cs.clean_demographics(scorecard_data, year)
         financials_clean = clean_cs.clean_financials(scorecard_data, year)
@@ -39,11 +39,17 @@ def main():
 
         print("All necessary tables created or already exists.")
 
-        # insert the data into the tables
+        # insert the new data into the tables
         utils.insert_data(query.INSERT_INSTITUTIONS, institutions_clean)
         utils.insert_data(query.INSERT_FINANCIALS, financials_clean)
         utils.insert_data(query.INSERT_DEMOGRAPHICS, demographics_clean)
         utils.insert_data(query.INSERT_ACADEMICS, academics_clean)
+
+        # update the existing data using most recent data
+        utils.update_data(query.INSERT_INSTITUTIONS, institutions_clean)
+        utils.update_data(query.INSERT_FINANCIALS, financials_clean)
+        utils.update_data(query.INSERT_DEMOGRAPHICS, demographics_clean)
+        utils.update_data(query.INSERT_ACADEMICS, academics_clean)
 
         print("Data loading complete.")
 

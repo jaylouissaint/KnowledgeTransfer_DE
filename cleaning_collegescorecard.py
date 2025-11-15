@@ -94,6 +94,9 @@ def clean_financials(df):
     # Drop rows where all relevant columns are NULLs
     sub_df = sub_df.dropna(subset=main_cols, how='all')
 
+    # Convert NA values to None (for psycopg2)
+    sub_df = sub_df.astype(object).where(pd.notnull(sub_df), None)
+
     return sub_df
 
 
@@ -120,6 +123,9 @@ def clean_academics(df):
 
     # Drop rows where all relevant columns are NULLs
     sub_df = sub_df.dropna(subset=main_cols, how='all')
+
+    # Convert NA values to None (for psycopg2)
+    sub_df = sub_df.astype(object).where(pd.notnull(sub_df), None)
 
     return sub_df
 
@@ -150,5 +156,8 @@ def clean_demographics(df):
 
     # Drop rows where all relevant columns are NULLs
     sub_df = sub_df.dropna(subset=main_cols, how='all')
+
+    # Convert NA values to None (for psycopg2)
+    sub_df = sub_df.astype(object).where(pd.notnull(sub_df), None)
 
     return sub_df

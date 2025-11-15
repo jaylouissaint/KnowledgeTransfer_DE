@@ -95,12 +95,13 @@ def insert_data(query, df):
     conn = get_connection()
     cur = conn.cursor()
     table_name = query.split("(")[0].strip().split()[-1]
+    print(f"====INSERTING TO {table_name} TABLE====")
     try:
         with conn.transaction():
             cur.executemany(query, df.values.tolist())
-            print(f"{cur.rowcount} rows loaded into {table_name}.")
+            print(f"{cur.rowcount} rows loaded or updated into {table_name}\n")
     except Exception as e:
-        print("Error inserting data: ", e)
+        print(f"Error inserting data into {table_name}: ", e)
     finally:
         cur.close()
         conn.close()
@@ -126,7 +127,7 @@ def update_row(query, df):
             cur.executemany(query, df.values.tolist())
             print(f"Successfully updated {cur.rowcount} rows in {table_name}.")
     except Exception as e:
-        print("Error updating data: ", e)
+        print(f"Error updating data into {table_name}: ", e)
     finally:
         cur.close()
         conn.close()

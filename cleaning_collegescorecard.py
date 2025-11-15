@@ -12,7 +12,8 @@ def clean_institutions(df):
     """
 
     # Specify columns that are needed in this table
-    main_cols = ['OPEID', 'UNITID', 'PREDDEG', 'HIGHDEG', 'CONTROL', 'REGION']
+    main_cols = ['OPEID', 'UNITID', 'ACCREDAGENCY', 'PREDDEG', 'HIGHDEG',
+                 'CONTROL', 'REGION']
 
     # Mapping settings for categorical columns
     mapping = {
@@ -52,17 +53,11 @@ def clean_institutions(df):
     try:
         # Obtain relevant columns
         sub_df = df[main_cols]
+        sub_df['LAST_REPORTED'] = df['YEAR']
     except KeyError as e:
         raise KeyError(f"Missing required columns for institutions: {e}")
     except Exception as e:
         print((f"Unexpected Error: {e}"))
-        raise
-
-    try:
-        # Transform into correct types as specified in the table
-        sub_df = sub_df.astype({'OPEID': 'Int64', 'UNITID': 'Int64'})
-    except Exception as e:
-        print(f"Failed to convert OPEID and UNITID to integers: {e}")
         raise
 
     # Map categorical variables to relevant strings
@@ -82,18 +77,22 @@ def clean_financials(df):
     """
 
     # Specify columns that are needed in this table
-    main_cols = ['OPEID', 'YEAR', 'TUITIONFEE_IN',
+    id_cols = ['UNITID', 'YEAR']
+    main_cols = ['TUITIONFEE_IN',
                  'TUITIONFEE_OUT', 'TUITIONFEE_PROG', 'TUITFTE',
                  'AVGFACSAL', 'CDR2', 'CDR3']
 
     try:
         # Obtain relevant columns
-        sub_df = df[main_cols]
+        sub_df = df[id_cols + main_cols]
     except KeyError as e:
         raise KeyError(f"Missing required columns for financials: {e}")
     except Exception as e:
         print((f"Unexpected Error: {e}"))
         raise
+
+    # Drop rows where all relevant columns are NULLs
+    sub_df = sub_df.dropna(subset=main_cols, how='all')
 
     return sub_df
 
@@ -105,18 +104,22 @@ def clean_academics(df):
     """
 
     # Specify columns that are needed in this table
-    main_cols = ['OPEID', 'YEAR', 'ADM_RATE', 'C100_4', 'C100_L4',
+    id_cols = ['UNITID', 'YEAR']
+    main_cols = ['ADM_RATE', 'C100_4', 'C100_L4',
                  'SAT_AVG', 'COUNT_NWNE_3YR', 'COUNT_WNE_3YR',
                  'CNTOVER150_3YR']
 
     try:
         # Obtain relevant columns
-        sub_df = df[main_cols]
+        sub_df = df[id_cols + main_cols]
     except KeyError as e:
         raise KeyError(f"Missing required columns for academics: {e}")
     except Exception as e:
         print((f"Unexpected Error: {e}"))
         raise
+
+    # Drop rows where all relevant columns are NULLs
+    sub_df = sub_df.dropna(subset=main_cols, how='all')
 
     return sub_df
 
@@ -128,7 +131,8 @@ def clean_demographics(df):
     """
 
     # Specify columns that are needed in this table
-    main_cols = ['OPEID', 'YEAR', 'UGDS', 'UGDS_MEN', 'UGDS_WOMEN',
+    id_cols = ['UNITID', 'YEAR']
+    main_cols = ['UGDS', 'UGDS_MEN', 'UGDS_WOMEN',
                  'UGDS_WHITE', 'UGDS_BLACK', 'UGDS_HISP', 'UGDS_ASIAN',
                  'UGDS_AIAN', 'UGDS_NHPI', 'UGDS_2MOR', 'UGDS_UNKN',
                  'IRPS_MEN', 'IRPS_WOMEN', 'IRPS_WHITE', 'IRPS_BLACK',
@@ -137,11 +141,14 @@ def clean_demographics(df):
 
     try:
         # Obtain relevant columns
-        sub_df = df[main_cols]
+        sub_df = df[id_cols + main_cols]
     except KeyError as e:
         raise KeyError(f"Missing required columns for demographics: {e}")
     except Exception as e:
         print((f"Unexpected Error: {e}"))
         raise
+
+    # Drop rows where all relevant columns are NULLs
+    sub_df = sub_df.dropna(subset=main_cols, how='all')
 
     return sub_df

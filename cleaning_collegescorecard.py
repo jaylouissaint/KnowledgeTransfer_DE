@@ -1,11 +1,13 @@
 """
-Functions to transform raw dataframe from college scorecard csv\n
+Functions to transform raw dataframe from college scorecard csv
 into insert-ready dataframe for different tables.
 """
+import pandas as pd
+
 
 def clean_institutions(df):
     """
-    Input: Raw dataframe from college-scorecard csv\n
+    Input: Raw dataframe from college-scorecard csv
     Output: Cleaned dataframe containing columns for the Institutions table
     """
 
@@ -28,12 +30,12 @@ def clean_institutions(df):
             3: "Bachelor's degree",
             4: "Graduate degree"
         },
-        "CONTROL":{
+        "CONTROL": {
             1: "Public",
             2: "Private nonprofit",
             3: "Private for-profit"
         },
-        "REGION":{
+        "REGION": {
             0: "U.S. Service Schools",
             1: "New England (CT, ME, MA, NH, RI, VT)",
             2: "Mid East (DE, DC, MD, NJ, NY, PA)",
@@ -51,7 +53,7 @@ def clean_institutions(df):
         # Obtain relevant columns
         sub_df = df[main_cols]
     except KeyError as e:
-        raise KeyError(f"Missing required columns in institutions dataframe: {e}")
+        raise KeyError(f"Missing required columns for institutions: {e}")
     except Exception as e:
         print((f"Unexpected Error: {e}"))
         raise
@@ -67,15 +69,17 @@ def clean_institutions(df):
     for cat_col in mapping.keys():
         sub_df[cat_col] = sub_df[cat_col].map(mapping[cat_col])
 
+    # Convert NA values to None (for psycopg2)
+    sub_df = sub_df.replace({pd.NA: None})
+
     return sub_df
 
 
-def clean_financials(df, year):
+def clean_financials(df):
     """
-    Input: Raw dataframe from college-scorecard csv and the YEAR of the data\n
+    Input: Raw dataframe from college-scorecard csv
     Output: Cleaned dataframe containing columns for the Financials table
     """
-    df['YEAR'] = year
 
     # Specify columns that are needed in this table
     main_cols = ['OPEID', 'YEAR', 'TUITIONFEE_IN',
@@ -86,7 +90,7 @@ def clean_financials(df, year):
         # Obtain relevant columns
         sub_df = df[main_cols]
     except KeyError as e:
-        raise KeyError(f"Missing required columns in financial dataframe: {e}")
+        raise KeyError(f"Missing required columns for financials: {e}")
     except Exception as e:
         print((f"Unexpected Error: {e}"))
         raise
@@ -94,12 +98,11 @@ def clean_financials(df, year):
     return sub_df
 
 
-def clean_academics(df, year):
+def clean_academics(df):
     """
-    Input: Raw dataframe from college-scorecard csv and the YEAR of the data\n
+    Input: Raw dataframe from college-scorecard csv
     Output: Cleaned dataframe containing columns for the Academics table
     """
-    df['YEAR'] = year
 
     # Specify columns that are needed in this table
     main_cols = ['OPEID', 'YEAR', 'ADM_RATE', 'C100_4', 'C100_L4',
@@ -110,7 +113,7 @@ def clean_academics(df, year):
         # Obtain relevant columns
         sub_df = df[main_cols]
     except KeyError as e:
-        raise KeyError(f"Missing required columns in financial dataframe: {e}")
+        raise KeyError(f"Missing required columns for academics: {e}")
     except Exception as e:
         print((f"Unexpected Error: {e}"))
         raise
@@ -118,12 +121,11 @@ def clean_academics(df, year):
     return sub_df
 
 
-def clean_demographics(df, year):
+def clean_demographics(df):
     """
-    Input: Raw dataframe from college-scorecard csv and the YEAR of the data\n
+    Input: Raw dataframe from college-scorecard csv
     Output: Cleaned dataframe containing columns for the Demographics table
     """
-    df['YEAR'] = year
 
     # Specify columns that are needed in this table
     main_cols = ['OPEID', 'YEAR', 'UGDS', 'UGDS_MEN', 'UGDS_WOMEN',
@@ -137,7 +139,7 @@ def clean_demographics(df, year):
         # Obtain relevant columns
         sub_df = df[main_cols]
     except KeyError as e:
-        raise KeyError(f"Missing required columns in financial dataframe: {e}")
+        raise KeyError(f"Missing required columns for demographics: {e}")
     except Exception as e:
         print((f"Unexpected Error: {e}"))
         raise

@@ -1,6 +1,10 @@
 '''This is the file where all the reusable queries are'''
 
-'''Institutions'''
+'''
+Institutions
+'''
+
+# --- CREATE ---
 CREATE_INSTITUTIONS = """
 CREATE TABLE IF NOT EXISTS Institutions(
     UNITID INTEGER PRIMARY KEY,
@@ -10,7 +14,8 @@ CREATE TABLE IF NOT EXISTS Institutions(
     HIGHDEG TEXT,
     CONTROL TEXT,
     REGION TEXT,
-    LAST_REPORTED INTEGER CHECK (LAST_REPORTED <= EXTRACT(YEAR FROM CURRENT_DATE)) NOT NULL,
+    LAST_REPORTED INTEGER CHECK (LAST_REPORTED <=
+        EXTRACT(YEAR FROM CURRENT_DATE)) NOT NULL,
     LAST_UPDATED TIMESTAMP CHECK (LAST_UPDATED <= NOW()) NOT NULL,
     UNIQUE (OPEID, UNITID)
 );
@@ -85,14 +90,11 @@ WHERE
  OR Institutions.LAST_REPORTED IS DISTINCT FROM EXCLUDED.LAST_REPORTED;
 """
 
-# --- UPDATE ---
-UPDATE_INSTITUTIONS = """
-UPDATE Institutions
-SET age = ?
-WHERE name = ?
-"""
+'''
+Financials
+'''
 
-'''Financials'''
+# --- CREATE ---
 CREATE_FINANCIALS = """
 CREATE TABLE IF NOT EXISTS Financials (
     FINID SERIAL PRIMARY KEY,
@@ -129,20 +131,11 @@ SET
     CDR3            = EXCLUDED.CDR3
 """
 
-# --- UPDATE ---
-UPDATE_FINANCIALS = """
-UPDATE users
-SET age = ?
-WHERE name = ?
-"""
+'''
+Academics
+'''
 
-# --- DELETE ---
-DELETE_FINANCIALS = """
-DELETE FROM users
-WHERE name = ?
-"""
-
-'''Academics'''
+# --- CREATE ---
 CREATE_ACADEMICS = """
 CREATE TABLE IF NOT EXISTS Academics (
     ACADID SERIAL PRIMARY KEY,
@@ -176,20 +169,10 @@ SET
     CNTOVER150_3YR  = EXCLUDED.CNTOVER150_3YR
 """
 
-# --- UPDATE ---
-UPDATE_ACADEMICS = """
-UPDATE users
-SET age = ?
-WHERE name = ?
-"""
-
-# --- DELETE ---
-DELETE_ACADEMICS = """
-DELETE FROM users
-WHERE name = ?
-"""
-
-'''Demographics'''
+'''
+Demographics
+'''
+# --- CREATE ---
 CREATE_DEMOGRAPHICS = """
 CREATE TABLE IF NOT EXISTS Demographics(
     DEMOID SERIAL PRIMARY KEY,
@@ -262,17 +245,4 @@ SET
     IRPS_NHPI   = EXCLUDED.IRPS_NHPI,
     IRPS_2MOR   = EXCLUDED.IRPS_2MOR,
     IRPS_UNKN   = EXCLUDED.IRPS_UNKN
-"""
-
-# --- UPDATE ---
-UPDATE_DEMOGRAPHICS = """
-UPDATE users
-SET age = ?
-WHERE name = ?
-"""
-
-# --- DELETE ---
-DELETE_DEMOGRAPHICS = """
-DELETE FROM users
-WHERE name = ?
 """

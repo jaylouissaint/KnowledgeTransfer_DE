@@ -28,6 +28,7 @@ def main():
         # Load CSV data into a DataFrame
         # NOTE: utils.load_data currently requires OPEID + UNITID columns.
         # For pure IPEDS files, you may want to relax that inside utilities.
+
         ipeds_raw = utils.load_data(filename, year)
 
         # Clean data for the IPEDS directory table

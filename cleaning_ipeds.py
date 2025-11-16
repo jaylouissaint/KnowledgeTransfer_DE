@@ -9,7 +9,7 @@ import pandas as pd
 def clean_directory(df):
     """
     Input: Raw dataframe from college-scorecard csv
-    Output: Cleaned dataframe containing columns for an 
+    Output: Cleaned dataframe containing columns for an
     InstitutionDirectory table
     (name, address, URLs, contact info, basic location fields + Carnegie codes)
     """
@@ -133,7 +133,8 @@ def clean_directory(df):
             6: "Majority graduate",
             7: "Exclusively graduate",
             8: "(Not classified)",
-            9: "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)"
+            9: "Not applicable, not in Carnegie universe "
+            "(not accredited or nondegree-granting)"
         },
         "C21IPUG": {
             1: "Associate's Colleges: High Transfer",
@@ -147,9 +148,12 @@ def clean_directory(df):
             9: "Arts & sciences plus professions, no graduate coexistence",
             10: "Arts & sciences plus professions, some graduate coexistence",
             11: "Arts & sciences plus professions, high graduate coexistence",
-            12: "Balanced arts & sciences/professions, no graduate coexistence",
-            13: "Balanced arts & sciences/professions, some graduate coexistence",
-            14: "Balanced arts & sciences/professions, high graduate coexistence",
+            12: "Balanced arts & sciences/professions,"
+            " no graduate coexistence",
+            13: "Balanced arts & sciences/professions,"
+            "some graduate coexistence",
+            14: "Balanced arts & sciences/professions,"
+            "high graduate coexistence",
             15: "Professions plus arts & sciences, no graduate coexistence",
             16: "Professions plus arts & sciences, some graduate coexistence",
             17: "Professions plus arts & sciences, high graduate coexistence",
@@ -157,7 +161,8 @@ def clean_directory(df):
             19: "Professions focus, some graduate coexistence",
             20: "Professions focus, high graduate coexistence",
             21: "Not Classified (Exclusively Graduate Programs)",
-            22: "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)"
+            22: "Not applicable, not in Carnegie universe "
+            "(not accredited or nondegree-granting)"
         },
         "CBSA": {
             1: "Metropolitan Statistical Area",
@@ -171,7 +176,8 @@ def clean_directory(df):
         # Obtain relevant columns
         sub_df = df[main_cols].copy()
     except KeyError as e:
-        raise KeyError(f"Missing required columns for institution directory: {e}")
+        raise KeyError(
+            f"Missing required columns for institution directory: {e}")
     except Exception as e:
         print(f"Unexpected Error: {e}")
         raise
@@ -194,7 +200,7 @@ def clean_directory(df):
             .str.strip()
             .replace({"": pd.NA})
             .str.zfill(5)
-    )
+        )
 
     # Convert pandas NA to Python None (for psycopg2)
     sub_df = sub_df.astype(object).where(pd.notnull(sub_df), None)

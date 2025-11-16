@@ -1,14 +1,10 @@
 # Driver code to load IPEDS data using the shared utilities module
-
 import sys
 import time
 import re
-
-
 import sql_queries as query      # <-- your IPEDS CREATE/INSERT SQL here
 import cleaning_ipeds as clean_ipeds   # <-- your clean_directory function
-import ipeds_utils as utils # <-- the utilities module you showed
-
+import ipeds_utils as utils  # <-- the utilities module you showed
 
 
 def main():
@@ -22,7 +18,7 @@ def main():
     # Extract 4-digit year from filename (e.g., hd2022.csv -> 2022)
     match = re.search(r"(\d{4})", filename)
     if not match:
-        print("Error: Could not extract year from filename. Expected a 4-digit year.")
+        print("Error: Could not extract 4-digit year from filename.")
         sys.exit(1)
     year = match.group(1)
 
@@ -30,7 +26,7 @@ def main():
         start_time = time.time()
 
         # Load CSV data into a DataFrame
-        # NOTE: utils.load_data currently expects OPEID + UNITID as required cols.
+        # NOTE: utils.load_data currently requires OPEID + UNITID columns.
         # For pure IPEDS files, you may want to relax that inside utilities.
         ipeds_raw = utils.load_data(filename, year)
 

@@ -40,11 +40,11 @@ def main():
         print("IPEDS directory data cleaned successfully.\n")
 
         # Create the directory table if it does not exist
-        utils.create_table(query.CREATE_DIRECTORY)
+        utils.create_table(query.CREATE_INSTITUTIONS_IPEDS)
         print("IPEDS directory table created or already exists.\n")
 
         # Insert the cleaned directory data
-        utils.insert_data(query.INSERT_DIRECTORY, directory_clean)
+        utils.insert_data(query.INSERT_INSTITUTIONS_IPEDS, directory_clean)
 
         print("\nIPEDS directory data loading complete.\n")
 

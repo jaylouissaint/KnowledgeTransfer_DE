@@ -44,7 +44,7 @@ def load_data(path_file, year):
             os.makedirs(folder, exist_ok=True)
 
             # Create a descriptive file name
-            file_name = f"college_scorecard_missing_{year}.csv"
+            file_name = f"ipeds_missing_{year}.csv"
             file_path = os.path.join(folder, file_name)
 
             # missing data is saved and outputted

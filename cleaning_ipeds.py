@@ -21,18 +21,17 @@ def clean_directory(df):
         'CITY',
         'STABBR',
         'ZIP',
-        'LONGITUD',
         'LATITUDE',
+        'LONGITUD',
         'C21BASIC',
         'C21IPUG',
         'C21UGPRF',
         'C21ENPRF',
         'C21SZSET',
+        'COUNTYCD',
         'CSA',
         'CBSA',
-        'CBSATYPE',
-        'FIPS',
-        'COUNTYCD'
+        'CBSATYPE'
     ]
 
     # Mapping settings for categorical columns (Carnegie + profiles)

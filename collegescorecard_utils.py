@@ -2,7 +2,7 @@
 create, load, update, and delete college score card data'''
 import pandas as pd
 import psycopg
-import credentials as cred
+import credentials
 import os
 
 
@@ -13,9 +13,9 @@ def get_connection():
     This function can be imported and reused throughout the ETL pipeline.
     """
     conn = psycopg.connect(host="debprodserver.postgres.database.azure.com",
-                           dbname=cred.DB_USER,
-                           user=cred.DB_USER,
-                           password=cred.DB_PASSWORD)
+                           dbname=credentials.DB_USER,
+                           user=credentials.DB_USER,
+                           password=credentials.DB_PASSWORD)
     return conn
 
 

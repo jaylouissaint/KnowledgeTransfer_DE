@@ -150,7 +150,7 @@ def clean_directory(df):
             21: "Not Classified (Exclusively Graduate Programs)",
             22: "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)"
         },
-         "CBSA": {
+        "CBSA": {
             1: "Metropolitan Statistical Area",
             2: "Micropolitan Statistical Area",
             3: "Not applicable",
@@ -172,10 +172,20 @@ def clean_directory(df):
         if cat_col in sub_df.columns:
             sub_df[cat_col] = sub_df[cat_col].map(col_map)
 
-    # Ensure ZIP and COUNTYCD are strings (preserve leading zeros)
-    for col in ['ZIP', 'COUNTYCD']:
-        if col in sub_df.columns:
-            sub_df[col] = sub_df[col].astype("string")
+    # --- ZIP cleaning (separate) ---
+    if 'ZIP' in sub_df.columns:
+        # Normalize ZIP: ALWAYS take the first 5 characters
+        sub_df['ZIP'] = sub_df['ZIP'].str[:5]
+
+    # COUNTYCD cleaning
+    if 'COUNTYCD' in sub_df.columns:
+        sub_df['COUNTYCD'] = (
+            sub_df['COUNTYCD']
+            .astype("string")
+            .str.strip()
+            .replace({"": pd.NA})
+            .str.zfill(5)
+    )
 
     # Convert pandas NA to Python None (for psycopg2)
     sub_df = sub_df.astype(object).where(pd.notnull(sub_df), None)

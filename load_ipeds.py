@@ -1,4 +1,3 @@
-# ipeds_loader.py
 # Driver code to load IPEDS data using the shared utilities module
 
 import sys
@@ -8,7 +7,7 @@ import re
 
 import sql_queries as query      # <-- your IPEDS CREATE/INSERT SQL here
 import cleaning_ipeds as clean_ipeds   # <-- your clean_directory function
-import collegescorecard_utils as utils # <-- the utilities module you showed
+import ipeds_utils as utils # <-- the utilities module you showed
 
 
 

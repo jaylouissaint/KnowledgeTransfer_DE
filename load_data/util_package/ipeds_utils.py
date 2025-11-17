@@ -6,6 +6,7 @@ import os
 import re
 import load_data.util_package.credentials as credentials
 
+
 def get_connection():
     """
     Establish and return a PostgreSQL database connection.
@@ -101,7 +102,9 @@ def insert_data(query, df):
     try:
         with conn.transaction():
             cur.executemany(query, df.values.tolist())
-            print(f"SUCCESS: {cur.rowcount} rows inserted or updated into {table_name}\n")
+            print(
+                f"SUCCESS: {cur.rowcount} rows inserted",
+                "or updated into {table_name}\n")
     except Exception as e:
         print(f"Insert failed at row: {cur.rowcount}")
         print(f"Error: {e}")
@@ -112,12 +115,14 @@ def insert_data(query, df):
 
 # Carnegie Classification Variable Cleaning
 
+
 CARNEGIE_SUFFIXES = ["BASIC", "IPUG", "UGPRF", "ENPRF", "SZSET"]
 
 
 def rename_latest_carnegie_columns(df: pd.DataFrame):
     """
-    Detects the latest Carnegie classification columns (e.g., C18BASIC, C21BASIC),
+    Detects the latest Carnegie classification columns
+    (e.g., C18BASIC, C21BASIC),
     finds the newest year, and renames them to fixed canonical names:
 
         C_BASIC, C_IPUG, C_UGPRF, C_ENPRF, C_SZSET
@@ -148,7 +153,8 @@ def rename_latest_carnegie_columns(df: pd.DataFrame):
     available_suffixes = {s for s, _ in found[latest_year]}
     missing = set(CARNEGIE_SUFFIXES) - available_suffixes
     if missing:
-        raise KeyError(f"Missing Carnegie variables for year {latest_year}: {missing}")
+        raise KeyError("Missing Carnegie variables",
+                       f"for year {latest_year}: {missing}")
 
     # Build rename map
     rename_map = {}

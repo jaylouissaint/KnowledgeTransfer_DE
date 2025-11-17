@@ -164,11 +164,11 @@ def clean_directory(df):
             22: "Not applicable, not in Carnegie universe "
             "(not accredited or nondegree-granting)"
         },
-        "CBSA": {
+        "CBSATYPE": {
             1: "Metropolitan Statistical Area",
             2: "Micropolitan Statistical Area",
-            3: "Not applicable",
-            4: "Not available"
+            -2: "Not applicable",
+            -3: "Not available"
         }
     }
 

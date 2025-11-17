@@ -24,11 +24,11 @@ def clean_directory(df):
         'ZIP',
         'LATITUDE',
         'LONGITUD',
-        'C21BASIC',
-        'C21IPUG',
-        'C21UGPRF',
-        'C21ENPRF',
-        'C21SZSET',
+        'C_BASIC',
+        'C_IPUG',
+        'C_UGPRF',
+        'C_ENPRF',
+        'C_SZSET',
         'COUNTYCD',
         'CSA',
         'CBSA',
@@ -201,6 +201,16 @@ def clean_directory(df):
             .replace({"": pd.NA})
             .str.zfill(5)
         )
+
+    sub_df = sub_df[
+            [
+                'UNITID', 'INSTNM', 'ADDR', 'CITY', 'STABBR', 'ZIP',
+                'LATITUDE', 'LONGITUDE',
+                'C_BASIC', 'C_IPUG', 'C_UGPRF', 'C_ENPRF', 'C_SZSET',
+                'COUNTYCD', 'CSA', 'CBSA',
+                'LAST_REPORTED'
+            ]
+        ]
 
     # Convert pandas NA to Python None (for psycopg2)
     sub_df = sub_df.astype(object).where(pd.notnull(sub_df), None)

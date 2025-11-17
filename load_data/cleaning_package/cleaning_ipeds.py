@@ -50,8 +50,8 @@ def clean_directory(df):
             3: "Associate's Colleges: High Transfer-High Nontraditional",
             4: "Associate's Colleges: "
             "Mixed Transfer/Career & Technical-High Traditional",
-            5: "Associate's Colleges: "
-            "Mixed Transfer/Career & Technical-Mixed Traditional/Nontraditional",
+            5: "Associate's Colleges: Mixed Transfer/Career "
+            "& Technical-Mixed Traditional/Nontraditional",
             6: "Associate's Colleges: "
             "Mixed Transfer/Career & Technical-High Nontraditional",
             7: "Associate's Colleges: "
@@ -137,7 +137,8 @@ def clean_directory(df):
             6: "Majority graduate",
             7: "Exclusively graduate",
             8: "(Not classified)",
-            9: "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)"
+            9: "Not applicable, not in Carnegie universe "
+            "(not accredited or nondegree-granting)"
         },
         "C_IPUG": {
             1: "Associate's Colleges: High Transfer",

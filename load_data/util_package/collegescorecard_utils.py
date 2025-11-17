@@ -103,10 +103,12 @@ def insert_data(query, df):
     try:
         with conn.transaction():
             cur.executemany(query, df.values.tolist())
-            print(f"{cur.rowcount} / {nrows} rows inserted or updated",
+            print(f"SUCCESS: {cur.rowcount} / {nrows} rows inserted or updated",
                   f"into {table_name}\n")
     except Exception as e:
-        print(f"Error inserting data into {table_name}: ", e)
+        print(f"Insert failed at row: {cur.rowcount}")
+        print(f"Error: {e}")
+        print(df.iloc[[cur.rowcount], :])
     finally:
         cur.close()
         conn.close()

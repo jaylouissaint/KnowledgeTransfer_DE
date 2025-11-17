@@ -27,7 +27,8 @@ By integrating, standardizing, and validating multiple datasets, the pipeline en
 Requires Python 3.13, psycopg, pandas, os.  Please see YAML file.
 
 ## Credentials
-Ensure that the correct username and password are set in the `load_data/util_package/credentials.py` file
+Create your own credential file and store in root directory.
+
 
 ## Usage
 Run the code below to update tables with data from Collegescorecard "MERGEDYYYY_AA_PP.csv file. 
@@ -58,10 +59,10 @@ python load_ipeds.py path/to/HDYYYY.csv
 ## Data Sources
 The college scorecard database consists of two main sources of data:
 1) The IPEDS Sheets 
-    a) naming convention "HDYYYY"
-        i) YYYY represents the year of the start of the school year
+    *a) naming convention "HDYYYY"
+        *i) YYYY represents the year of the start of the school year
 2) College Scorecard Sheets 
-    a) naming convention "MERGEDYYYY_AA_PP"
-        i) YYYY represents the start year of the school year
-        ii) AA represents the end year of the school year
+    *a) naming convention "MERGEDYYYY_AA_PP"
+        *i) YYYY represents the start year of the school year
+        *ii) AA represents the end year of the school year
 

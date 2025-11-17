@@ -23,6 +23,11 @@ By integrating, standardizing, and validating multiple datasets, the pipeline en
 * Demographics: This table stores yearly university demographic information such as the percentage of different ethnicities.
   * Joins to Institutions and Institutions_IPEDS ON UNITID 
 
+This schema is designed with the following assumptions:
+* Variables stored in the Institution Table will rarely change and that we are only interested in the most recent information.
+  * When colleges change names, move, grow, or change, the table is overwritten with the most recent update.
+* Carnegie Classifications change every 3 years. The most recent Carnegie Classification is the 2021 version. We store the most recent version. 
+
 ## Installation
 Requires Python 3.13, psycopg, pandas, os.  Please see YAML file.
 Or use the provided virtual environment with the following command:

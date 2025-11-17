@@ -4,6 +4,7 @@ import pandas as pd
 import psycopg
 import credentials
 import os
+import re
 
 
 def get_connection():
@@ -105,3 +106,56 @@ def insert_data(query, df):
     finally:
         cur.close()
         conn.close()
+
+# Carnegie Classification Variable Cleaning 
+
+CARNEGIE_VAR_SUFFIXES = ["BASIC", "IPUG", "UGPRF", "ENPRF", "SZSET"]
+
+
+def detect_latest_carnegie_year(df: pd.DataFrame) -> int:
+    """
+    Scan dataframe columns for Carnegie variables of the form:
+        CYYBASIC, CYYIPUG, CYYUGPRF, CYYENPRF, CYYSZSET
+    Extract the YY as an integer and return the max (latest) year suffix.
+    """
+    pattern = re.compile(r"^C(\d{2})(BASIC|IPUG|UGPRF|ENPRF|SZSET)$")
+
+    years = set()
+    for col in df.columns:
+        m = pattern.match(col)
+        if m:
+            year_suffix = int(m.group(1))
+            years.add(year_suffix)
+
+    if not years:
+        raise ValueError("No Carnegie classification columns (CYY*) found in dataframe.")
+
+    return max(years)
+
+
+def get_latest_carnegie_columns(df: pd.DataFrame):
+    """
+    Return a dict mapping logical Carnegie variable names to the actual
+    column names for the latest available Carnegie year in the dataframe.
+
+    Example return:
+        {
+            "BASIC": "C21BASIC",
+            "IPUG":  "C21IPUG",
+            "UGPRF": "C21UGPRF",
+            "ENPRF": "C21ENPRF",
+            "SZSET": "C21SZSET",
+            "year":  21
+        }
+    """
+    latest_year = detect_latest_carnegie_year(df)
+    prefix = f"C{latest_year}"
+
+    col_map = {"year": latest_year}
+    for suffix in CARNEGIE_VAR_SUFFIXES:
+        col_name = f"{prefix}{suffix}"
+        if col_name not in df.columns:
+            raise KeyError(f"Expected Carnegie column '{col_name}' not found in dataframe.")
+        col_map[suffix] = col_name
+
+    return col_map

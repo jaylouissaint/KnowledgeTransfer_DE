@@ -104,7 +104,7 @@ def insert_data(query, df):
             cur.executemany(query, df.values.tolist())
             print(
                 f"SUCCESS: {cur.rowcount} rows inserted",
-                "or updated into {table_name}\n")
+                f"or updated into {table_name}\n")
     except Exception as e:
         print(f"Insert failed at row: {cur.rowcount}")
         print(f"Error: {e}")

@@ -9,7 +9,6 @@ import load_data.cleaning_package.cleaning_ipeds as clean_ipeds
 import load_data.util_package.ipeds_utils as utils
 # the utilities module above
 
-
 def main():
     # Get csv filename from command-line args
     if len(sys.argv) < 2:

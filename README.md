@@ -27,8 +27,7 @@ By integrating, standardizing, and validating multiple datasets, the pipeline en
 Requires Python 3.13, psycopg, pandas, os.  Please see YAML file.
 
 ## Credentials
-Create your own credential file and store in root directory.
-
+Create your own credential file `credentials.py` in the `load_data/util_package` folder.
 
 ## Usage
 Run the code below to update tables with data from Collegescorecard "MERGEDYYYY_AA_PP.csv file. 

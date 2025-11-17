@@ -25,6 +25,11 @@ By integrating, standardizing, and validating multiple datasets, the pipeline en
 
 ## Installation
 Requires Python 3.13, psycopg, pandas, os.  Please see YAML file.
+Or use the provided virtual environment with the following command:
+```
+conda env create -f environment.college_scorecard.yml 
+conda activate scorecard_env
+```
 
 ## Credentials
 Create your own credential file `credentials.py` in the `load_data/util_package` folder. We are assuming the username and database name is the same. The username and password in the credentials file should be stored as: 

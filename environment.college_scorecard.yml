@@ -1,4 +1,4 @@
-name: DEpythonsql
+name: scorecard_env
 channels:
   - conda-forge
   - defaults

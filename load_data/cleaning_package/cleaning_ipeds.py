@@ -7,16 +7,18 @@ import pandas as pd
 from load_data.util_package.ipeds_utils import rename_latest_carnegie_columns
 
 
-
 def clean_directory(df):
     """
-    Input: Raw dataframe from college-scorecard csv
-    Output: Cleaned dataframe containing columns for an
-    InstitutionDirectory table
-    (name, address, URLs, contact info, basic location fields + Carnegie codes)
+    Input: Raw dataframe from IPEDS HD csv (with YEAR already added)
+    Output: Cleaned dataframe for Institutions_IPEDS table
+    (name, address, basic location fields + Carnegie codes).
     """
 
-    # Identifier + main columns based on your snippet
+    # 1) Normalize Carnegie variables to fixed names:
+    #    C_BASIC, C_IPUG, C_UGPRF, C_ENPRF, C_SZSET
+    df, carnegie_year = rename_latest_carnegie_columns(df)
+
+    # 2) Base columns we want
     main_cols = [
         'UNITID',
         'INSTNM',
@@ -25,7 +27,7 @@ def clean_directory(df):
         'STABBR',
         'ZIP',
         'LATITUDE',
-        'LONGITUD',
+        'LONGITUD',   # will rename → LONGITUDE below
         'C_BASIC',
         'C_IPUG',
         'C_UGPRF',
@@ -34,30 +36,23 @@ def clean_directory(df):
         'COUNTYCD',
         'CSA',
         'CBSA',
-        'CBSATYPE'
+        # we'll add LAST_REPORTED after
     ]
 
-    # Mapping settings for categorical columns (Carnegie + profiles)
+    # Mapping settings for categorical columns (Carnegie + CBSA)
     mapping = {
-        "C21BASIC": {
+        "C_BASIC": {
             -2: "Not applicable",
             0: "(Not classified)",
             1: "Associate's Colleges: High Transfer-High Traditional",
-            2: "Associate's Colleges: High Transfer-Mixed"
-            "Traditional/Nontraditional",
+            2: "Associate's Colleges: High Transfer-Mixed Traditional/Nontraditional",
             3: "Associate's Colleges: High Transfer-High Nontraditional",
-            4: "Associate's Colleges: Mixed "
-            "Transfer/Career & Technical-High Traditional",
-            5: "Associate's Colleges: Mixed "
-            "Transfer/Career & Technical-Mixed Traditional/Nontraditional",
-            6: "Associate's Colleges: Mixed "
-            "Transfer/Career & Technical-High Nontraditional",
-            7: "Associate's Colleges: "
-            "High Career & Technical-High Traditional",
-            8: "Associate's Colleges: "
-            "High Career & Technical-Mixed Traditional/Nontraditional",
-            9: "Associate's Colleges: "
-            "High Career & Technical-High Nontraditional",
+            4: "Associate's Colleges: Mixed Transfer/Career & Technical-High Traditional",
+            5: "Associate's Colleges: Mixed Transfer/Career & Technical-Mixed Traditional/Nontraditional",
+            6: "Associate's Colleges: Mixed Transfer/Career & Technical-High Nontraditional",
+            7: "Associate's Colleges: High Career & Technical-High Traditional",
+            8: "Associate's Colleges: High Career & Technical-Mixed Traditional/Nontraditional",
+            9: "Associate's Colleges: High Career & Technical-High Nontraditional",
             10: "Special Focus Two-Year: Health Professions",
             11: "Special Focus Two-Year: Technical Professions",
             12: "Special Focus Two-Year: Arts & Design",
@@ -71,21 +66,19 @@ def clean_directory(df):
             20: "Master's Colleges & Universities: Small Programs",
             21: "Baccalaureate Colleges: Arts & Sciences Focus",
             22: "Baccalaureate Colleges: Diverse Fields",
-            23: "Baccalaureate/Associate's Colleges: "
-            "Mixed Baccalaureate/Associate's",
+            23: "Baccalaureate/Associate's Colleges: Mixed Baccalaureate/Associate's",
             24: "Special Focus Four-Year: Faith-Related Institutions",
             25: "Special Focus Four-Year: Medical Schools & Centers",
             26: "Special Focus Four-Year: Other Health Professions Schools",
             27: "Special Focus Four-Year: Research Institution",
-            28: "Special Focus Four-Year: "
-            "Engineering and Other Technology-Related Schools",
+            28: "Special Focus Four-Year: Engineering and Other Technology-Related Schools",
             29: "Special Focus Four-Year: Business & Management Schools",
             30: "Special Focus Four-Year: Arts, Music & Design Schools",
             31: "Special Focus Four-Year: Law Schools",
             32: "Special Focus Four-Year: Other Special Focus Institutions",
             33: "Tribal Colleges"
         },
-        "C21UGPRF": {
+        "C_UGPRF": {
             -2: "Not applicable",
             0: "Not classified (Exclusively Graduate)",
             1: "Two-year, higher part-time",
@@ -104,7 +97,7 @@ def clean_directory(df):
             14: "Four-year, full-time, more selective, lower transfer-in",
             15: "Four-year, full-time, more selective, higher transfer-in"
         },
-        "C21SZSET": {
+        "C_SZSET": {
             -2: "Not applicable",
             0: "(Not classified)",
             1: "Two-year, very small",
@@ -126,7 +119,7 @@ def clean_directory(df):
             17: "Four-year, large, highly residential",
             18: "Exclusively graduate/professional"
         },
-        "C21ENPRF": {
+        "C_ENPRF": {
             1: "Exclusively undergraduate two-year",
             2: "Exclusively undergraduate four-year",
             3: "Very high undergraduate",
@@ -135,10 +128,9 @@ def clean_directory(df):
             6: "Majority graduate",
             7: "Exclusively graduate",
             8: "(Not classified)",
-            9: "Not applicable, not in Carnegie universe "
-            "(not accredited or nondegree-granting)"
+            9: "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)"
         },
-        "C21IPUG": {
+        "C_IPUG": {
             1: "Associate's Colleges: High Transfer",
             2: "Associate's Colleges: Mixed Transfer/Career & Technical",
             3: "Associate's Colleges: High Career & Technical",
@@ -150,12 +142,9 @@ def clean_directory(df):
             9: "Arts & sciences plus professions, no graduate coexistence",
             10: "Arts & sciences plus professions, some graduate coexistence",
             11: "Arts & sciences plus professions, high graduate coexistence",
-            12: "Balanced arts & sciences/professions,"
-            " no graduate coexistence",
-            13: "Balanced arts & sciences/professions,"
-            "some graduate coexistence",
-            14: "Balanced arts & sciences/professions,"
-            "high graduate coexistence",
+            12: "Balanced arts & sciences/professions, no graduate coexistence",
+            13: "Balanced arts & sciences/professions, some graduate coexistence",
+            14: "Balanced arts & sciences/professions, high graduate coexistence",
             15: "Professions plus arts & sciences, no graduate coexistence",
             16: "Professions plus arts & sciences, some graduate coexistence",
             17: "Professions plus arts & sciences, high graduate coexistence",
@@ -163,38 +152,38 @@ def clean_directory(df):
             19: "Professions focus, some graduate coexistence",
             20: "Professions focus, high graduate coexistence",
             21: "Not Classified (Exclusively Graduate Programs)",
-            22: "Not applicable, not in Carnegie universe "
-            "(not accredited or nondegree-granting)"
+            22: "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)"
         },
-        "CBSA": {
+        "CBSATYPE": {
             1: "Metropolitan Statistical Area",
             2: "Micropolitan Statistical Area",
-            3: "Not applicable",
-            4: "Not available"
+            -2: "Not applicable",
+            -3: "Not available"
         }
     }
 
     try:
-        # Obtain relevant columns
         sub_df = df[main_cols].copy()
     except KeyError as e:
         raise KeyError(
-            f"Missing required columns for institution directory: {e}")
-    except Exception as e:
-        print(f"Unexpected Error: {e}")
-        raise
+            f"Missing required columns for institution directory: {e}"
+        )
 
-    # Map categorical variables to relevant strings
+    # Rename LONGITUD ➜ LONGITUDE to match DB
+    if 'LONGITUD' in sub_df.columns:
+        sub_df.rename(columns={'LONGITUD': 'LONGITUDE'}, inplace=True)
+
+    # Map categorical variables (Carnegie + CBSA)
     for cat_col, col_map in mapping.items():
         if cat_col in sub_df.columns:
+            sub_df[cat_col] = pd.to_numeric(sub_df[cat_col], errors="coerce")
             sub_df[cat_col] = sub_df[cat_col].map(col_map)
 
-    # --- ZIP cleaning (separate) ---
+    # ZIP cleaning – first 5 chars
     if 'ZIP' in sub_df.columns:
-        # Normalize ZIP: ALWAYS take the first 5 characters
-        sub_df['ZIP'] = sub_df['ZIP'].str[:5]
+        sub_df['ZIP'] = sub_df['ZIP'].astype("string").str[:5]
 
-    # COUNTYCD cleaning
+    # COUNTYCD cleaning – 5-digit FIPS with leading zeros
     if 'COUNTYCD' in sub_df.columns:
         sub_df['COUNTYCD'] = (
             sub_df['COUNTYCD']
@@ -204,19 +193,24 @@ def clean_directory(df):
             .str.zfill(5)
         )
 
+    # LAST_REPORTED from YEAR
+    sub_df['LAST_REPORTED'] = df['YEAR'].astype(int)
+
+    # Reorder columns to match INSERT_INSTITUTIONS_IPEDS
     sub_df = sub_df[
-            [
-                'UNITID', 'INSTNM', 'ADDR', 'CITY', 'STABBR', 'ZIP',
-                'LATITUDE', 'LONGITUDE',
-                'C_BASIC', 'C_IPUG', 'C_UGPRF', 'C_ENPRF', 'C_SZSET',
-                'COUNTYCD', 'CSA', 'CBSA',
-                'LAST_REPORTED'
-            ]
+        [
+            'UNITID', 'INSTNM', 'ADDR', 'CITY', 'STABBR', 'ZIP',
+            'LATITUDE', 'LONGITUDE',
+            'C_BASIC', 'C_IPUG', 'C_UGPRF', 'C_ENPRF', 'C_SZSET',
+            'COUNTYCD', 'CSA', 'CBSA',
+            'LAST_REPORTED'
         ]
+    ]
 
     # Convert pandas NA to Python None (for psycopg2)
     sub_df = sub_df.astype(object).where(pd.notnull(sub_df), None)
-    print(f"{sub_df.shape[0]} non-empty rows found for institutions_IPED",
-          "table.")
+    print(
+        f"{sub_df.shape[0]} non-empty rows found for Institutions_IPEDS table."
+    )
 
     return sub_df

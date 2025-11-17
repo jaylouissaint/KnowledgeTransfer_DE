@@ -2,9 +2,9 @@
 create, load, update, and delete college score card data'''
 import pandas as pd
 import psycopg
-from load_data.util_package import credentials as credentials
 import os
 import re
+import load_data.util_package.credentials as credentials
 
 def get_connection():
     """
@@ -34,7 +34,7 @@ def load_data(path_file, year):
 
         # Split data into complete and missing
         # We only care if specific required columns are missing
-        required_cols = ["OPEID", "UNITID"]
+        required_cols = ["UNITID"]
         complete_data = data.dropna(subset=required_cols)
         missing_data = data[data[required_cols].isna().any(axis=1)]
         missing_rows = missing_data.shape[0]

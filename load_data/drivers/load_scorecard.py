@@ -24,6 +24,7 @@ def main():
         # Load csv data into a df
         scorecard_data = utils.load_data(filename, year)
 
+        print("Initiniating data cleaning...")
         # clean data
         institutions_clean = clean_cs.clean_institutions(scorecard_data)
         academics_clean = clean_cs.clean_academics(scorecard_data)

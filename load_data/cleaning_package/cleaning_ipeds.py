@@ -214,5 +214,7 @@ def clean_directory(df):
 
     # Convert pandas NA to Python None (for psycopg2)
     sub_df = sub_df.astype(object).where(pd.notnull(sub_df), None)
+    print(f"{sub_df.shape[0]} non-empty rows found for institutions_IPED",
+          "table.")
 
     return sub_df

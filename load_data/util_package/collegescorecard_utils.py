@@ -27,7 +27,8 @@ def load_data(path_file, year):
     '''
     try:
         data = pd.read_csv(path_file, low_memory=False)
-        print(f"{data.shape[0]} rows read from file.")
+        total_rows = data.shape[0]
+        print(f"{total_rows} rows read from file.")
         # Add a year column
         data['YEAR'] = year
 
@@ -50,6 +51,7 @@ def load_data(path_file, year):
             # missing data is saved and outputted
             missing_data.to_csv(file_path, index=False)
             print(f"{missing_rows} missing rows saved to {file_path}.")
+            print(f"Proceeding with {complete_data.shape[0]} valid rows.")
 
         return complete_data
     except Exception as e:
@@ -101,7 +103,8 @@ def insert_data(query, df):
     try:
         with conn.transaction():
             cur.executemany(query, df.values.tolist())
-            print(f"{cur.rowcount} / {nrows} rows loaded or updated into {table_name}\n")
+            print(f"{cur.rowcount} / {nrows} rows inserted or updated",
+                  f"into {table_name}\n")
     except Exception as e:
         print(f"Error inserting data into {table_name}: ", e)
     finally:

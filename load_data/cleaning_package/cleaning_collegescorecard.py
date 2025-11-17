@@ -66,6 +66,7 @@ def clean_institutions(df):
 
     # Convert NA values to None (for psycopg2)
     sub_df = sub_df.replace({pd.NA: None})
+    print(f"{sub_df.shape[0]} non-empty rows found for Institutions table.")
 
     return sub_df
 
@@ -96,6 +97,7 @@ def clean_financials(df):
 
     # Convert NA values to None (for psycopg2)
     sub_df = sub_df.astype(object).where(pd.notnull(sub_df), None)
+    print(f"{sub_df.shape[0]} non-empty rows found for financials table.")
 
     return sub_df
 
@@ -126,6 +128,7 @@ def clean_academics(df):
 
     # Convert NA values to None (for psycopg2)
     sub_df = sub_df.astype(object).where(pd.notnull(sub_df), None)
+    print(f"{sub_df.shape[0]} non-empty rows found for academics table.")
 
     return sub_df
 
@@ -159,5 +162,6 @@ def clean_demographics(df):
 
     # Convert NA values to None (for psycopg2)
     sub_df = sub_df.astype(object).where(pd.notnull(sub_df), None)
+    print(f"{sub_df.shape[0]} non-empty rows found for demographics table.")
 
     return sub_df

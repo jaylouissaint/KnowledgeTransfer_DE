@@ -4,6 +4,8 @@ into insert-ready dataframe for different tables.
 """
 
 import pandas as pd
+from load_data.util_package.ipeds_utils import rename_latest_carnegie_columns
+
 
 
 def clean_directory(df):

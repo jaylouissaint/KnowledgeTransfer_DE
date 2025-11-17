@@ -4,7 +4,7 @@ import pandas as pd
 import psycopg
 from load_data.util_package import credentials as credentials
 import os
-
+import re
 
 def get_connection():
     """

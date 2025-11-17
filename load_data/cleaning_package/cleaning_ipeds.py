@@ -45,14 +45,21 @@ def clean_directory(df):
             -2: "Not applicable",
             0: "(Not classified)",
             1: "Associate's Colleges: High Transfer-High Traditional",
-            2: "Associate's Colleges: High Transfer-Mixed Traditional/Nontraditional",
+            2: "Associate's Colleges: "
+            "High Transfer-Mixed Traditional/Nontraditional",
             3: "Associate's Colleges: High Transfer-High Nontraditional",
-            4: "Associate's Colleges: Mixed Transfer/Career & Technical-High Traditional",
-            5: "Associate's Colleges: Mixed Transfer/Career & Technical-Mixed Traditional/Nontraditional",
-            6: "Associate's Colleges: Mixed Transfer/Career & Technical-High Nontraditional",
-            7: "Associate's Colleges: High Career & Technical-High Traditional",
-            8: "Associate's Colleges: High Career & Technical-Mixed Traditional/Nontraditional",
-            9: "Associate's Colleges: High Career & Technical-High Nontraditional",
+            4: "Associate's Colleges: "
+            "Mixed Transfer/Career & Technical-High Traditional",
+            5: "Associate's Colleges: "
+            "Mixed Transfer/Career & Technical-Mixed Traditional/Nontraditional",
+            6: "Associate's Colleges: "
+            "Mixed Transfer/Career & Technical-High Nontraditional",
+            7: "Associate's Colleges: "
+            "High Career & Technical-High Traditional",
+            8: "Associate's Colleges: "
+            "High Career & Technical-Mixed Traditional/Nontraditional",
+            9: "Associate's Colleges: "
+            "High Career & Technical-High Nontraditional",
             10: "Special Focus Two-Year: Health Professions",
             11: "Special Focus Two-Year: Technical Professions",
             12: "Special Focus Two-Year: Arts & Design",
@@ -66,12 +73,14 @@ def clean_directory(df):
             20: "Master's Colleges & Universities: Small Programs",
             21: "Baccalaureate Colleges: Arts & Sciences Focus",
             22: "Baccalaureate Colleges: Diverse Fields",
-            23: "Baccalaureate/Associate's Colleges: Mixed Baccalaureate/Associate's",
+            23: "Baccalaureate/Associate's Colleges: "
+            "Mixed Baccalaureate/Associate's",
             24: "Special Focus Four-Year: Faith-Related Institutions",
             25: "Special Focus Four-Year: Medical Schools & Centers",
             26: "Special Focus Four-Year: Other Health Professions Schools",
             27: "Special Focus Four-Year: Research Institution",
-            28: "Special Focus Four-Year: Engineering and Other Technology-Related Schools",
+            28: "Special Focus Four-Year: "
+            "Engineering and Other Technology-Related Schools",
             29: "Special Focus Four-Year: Business & Management Schools",
             30: "Special Focus Four-Year: Arts, Music & Design Schools",
             31: "Special Focus Four-Year: Law Schools",
@@ -142,9 +151,12 @@ def clean_directory(df):
             9: "Arts & sciences plus professions, no graduate coexistence",
             10: "Arts & sciences plus professions, some graduate coexistence",
             11: "Arts & sciences plus professions, high graduate coexistence",
-            12: "Balanced arts & sciences/professions, no graduate coexistence",
-            13: "Balanced arts & sciences/professions, some graduate coexistence",
-            14: "Balanced arts & sciences/professions, high graduate coexistence",
+            12: "Balanced arts & sciences/professions, "
+            "no graduate coexistence",
+            13: "Balanced arts & sciences/professions, "
+            "some graduate coexistence",
+            14: "Balanced arts & sciences/professions, "
+            "high graduate coexistence",
             15: "Professions plus arts & sciences, no graduate coexistence",
             16: "Professions plus arts & sciences, some graduate coexistence",
             17: "Professions plus arts & sciences, high graduate coexistence",
@@ -152,7 +164,8 @@ def clean_directory(df):
             19: "Professions focus, some graduate coexistence",
             20: "Professions focus, high graduate coexistence",
             21: "Not Classified (Exclusively Graduate Programs)",
-            22: "Not applicable, not in Carnegie universe (not accredited or nondegree-granting)"
+            22: "Not applicable, not in Carnegie universe "
+            "(not accredited or nondegree-granting)"
         },
         "CBSATYPE": {
             1: "Metropolitan Statistical Area",

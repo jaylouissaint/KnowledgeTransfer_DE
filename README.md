@@ -29,12 +29,13 @@ Requires Python 3.13, psycopg, pandas, os.  Please see YAML file.
 ## Usage
 Run the code below to update tables with data from Collegescorecard "MERGEDYYYY_AA_PP.csv file. 
 ```
+python -m load_data.drivers.load_scorecard path/to/MERGEDYYYY_AA_PP.csv
 python load_scorecard.py path/to/MERGEDYYYY_AA_PP.csv
 ```
 
 Run the code below to update tables with data from IPEDS "HDYYYY.csv" file. 
 ```
-python load_ipeds.py path/to/HDYYYY.csv
+python -m load_data.drivers.load_ipeds path/to/MERGEDYYYY_AA_PP.csv
 ```
 
 ## File Structure

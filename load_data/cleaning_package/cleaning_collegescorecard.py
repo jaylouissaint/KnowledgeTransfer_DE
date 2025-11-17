@@ -52,8 +52,8 @@ def clean_institutions(df):
 
     try:
         # Obtain relevant columns
-        sub_df = df[main_cols]
-        sub_df['LAST_REPORTED'] = df['YEAR']
+        sub_df = df[main_cols].copy()
+        sub_df.loc[:, 'LAST_REPORTED'] = df['YEAR']
     except KeyError as e:
         raise KeyError(f"Missing required columns for institutions: {e}")
     except Exception as e:

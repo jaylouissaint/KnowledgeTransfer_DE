@@ -2,7 +2,7 @@
 create, load, update, and delete college score card data'''
 import pandas as pd
 import psycopg
-import credentials as cred
+from load_data.util_package import credentials as cred
 import os
 
 
@@ -26,8 +26,8 @@ def load_data(path_file, year):
     Rows missing required fields are saved and outputted into csv file.
     '''
     try:
-        data = pd.read_csv(path_file)
-
+        data = pd.read_csv(path_file, low_memory=False)
+        print(f"{data.shape[0]} rows read from file.")
         # Add a year column
         data['YEAR'] = year
 
@@ -96,10 +96,12 @@ def insert_data(query, df):
     cur = conn.cursor()
     table_name = query.split("(")[0].strip().split()[-1]
     print(f"====INSERTING TO {table_name} TABLE====")
+
+    nrows = df.shape[0]
     try:
         with conn.transaction():
             cur.executemany(query, df.values.tolist())
-            print(f"{cur.rowcount} rows loaded or updated into {table_name}\n")
+            print(f"{cur.rowcount} / {nrows} rows loaded or updated into {table_name}\n")
     except Exception as e:
         print(f"Error inserting data into {table_name}: ", e)
     finally:

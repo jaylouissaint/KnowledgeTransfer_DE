@@ -2,9 +2,9 @@
 import sys
 import time
 import re
-import sql_queries as query      # <-- your IPEDS CREATE/INSERT SQL here
-import cleaning_ipeds as clean_ipeds   # <-- your clean_directory function
-import ipeds_utils as utils  # <-- the utilities module you showed
+from load_data.util_package import sql_queries as query    # <-- your IPEDS CREATE/INSERT SQL here
+import load_data.cleaning_package.cleaning_ipeds as clean_ipeds   # <-- your clean_directory function
+import load_data.util_package.ipeds_utils as utils  # <-- the utilities module you showed
 
 
 def main():

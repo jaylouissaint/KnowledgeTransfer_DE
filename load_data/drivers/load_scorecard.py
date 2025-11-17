@@ -1,10 +1,10 @@
 # Your driver code (including input / output handling) should go here
 import sys
-import sql_queries as query
-import cleaning_collegescorecard as clean_cs
-import collegescorecard_utils as utils
 import time
 import re
+from load_data.util_package import sql_queries as query
+import load_data.cleaning_package.cleaning_collegescorecard as clean_cs
+import load_data.util_package.collegescorecard_utils as utils
 
 
 def main():

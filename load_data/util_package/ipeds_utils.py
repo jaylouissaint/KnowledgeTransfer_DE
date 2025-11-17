@@ -2,9 +2,8 @@
 create, load, update, and delete college score card data'''
 import pandas as pd
 import psycopg
-import credentials
+from load_data.util_package import credentials as credentials
 import os
-import re
 
 
 def get_connection():
@@ -28,6 +27,7 @@ def load_data(path_file, year):
     '''
     try:
         data = pd.read_csv(path_file, encoding="latin1", dtype=str)
+        print(f"{data.shape[0]} rows read from file.")
 
         # Add a year column
         data['YEAR'] = year

@@ -9,6 +9,7 @@ import load_data.cleaning_package.cleaning_ipeds as clean_ipeds
 import load_data.util_package.ipeds_utils as utils
 # the utilities module above
 
+
 def main():
     # Get csv filename from command-line args
     if len(sys.argv) < 2:
@@ -30,12 +31,10 @@ def main():
         # Load CSV data into a DataFrame
         # NOTE: utils.load_data currently requires OPEID + UNITID columns.
         # For pure IPEDS files, you may want to relax that inside utilities.
-
         ipeds_raw = utils.load_data(filename, year)
 
         # Clean data for the IPEDS directory table
         directory_clean = clean_ipeds.clean_directory(ipeds_raw)
-
         print("IPEDS directory data cleaned successfully.\n")
 
         # Create the directory table if it does not exist
@@ -44,7 +43,6 @@ def main():
 
         # Insert the cleaned directory data
         utils.insert_data(query.INSERT_INSTITUTIONS_IPEDS, directory_clean)
-
         print("\nIPEDS directory data loading complete.\n")
 
         # Calculate time elapsed to load this file

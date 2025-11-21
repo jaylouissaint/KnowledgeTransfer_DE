@@ -5,6 +5,7 @@ import psycopg
 import os
 import re
 import load_data.util_package.credentials as credentials
+import load_data.util_package.logging as log
 
 
 def get_connection():
@@ -54,8 +55,13 @@ def load_data(path_file, year):
             print(f"{missing_rows} missing rows saved to {file_path}.")
             print(f"Proceeding with {complete_data.shape[0]} valid rows.")
 
+            # add missing data to log
+            log.get_logger(__name__).error(
+                f"Primary key error: {missing_rows}",
+                f"missing rows saved to {file_path}.", exc_info=True)
         return complete_data
     except Exception as e:
+        log.get_logger(__name__).error(f"Loading error: {e}", exc_info=True)
         print(f"Error occured loading data: {e}")
         raise
 
@@ -75,8 +81,12 @@ def create_table(query):
             conn.commit()
             print(f"{table_name} table created or already exists.")
     except psycopg.errors.DatabaseError as e:
+        log.get_logger(__name__).error(
+            f"Database error occurred: {e}", exc_info=True)
         print(f"Database error occurred: {e}")
     except Exception as e:
+        log.get_logger(__name__).error(
+            f"Non-Database error occurred: {e}", exc_info=True)
         print(f"Non-Database error occurred: {e}")
     finally:
         cur.close()
@@ -106,6 +116,8 @@ def insert_data(query, df):
                 f"SUCCESS: {cur.rowcount} rows inserted",
                 f"or updated into {table_name}\n")
     except Exception as e:
+        log.get_logger(__name__).error(
+            f"Insertion failed at row: {e}", exc_info=True)
         print(f"Insert failed at row: {cur.rowcount}")
         print(f"Error: {e}")
         print(df.iloc[[cur.rowcount], :])
@@ -144,6 +156,9 @@ def rename_latest_carnegie_columns(df: pd.DataFrame):
             found.setdefault(year, []).append((suffix, col))
 
     if not found:
+        log.get_logger(__name__).error(
+            "ValueError: No Carnegie CYY* columns found in dataframe.",
+            exc_info=True)
         raise ValueError("No Carnegie CYY* columns found in dataframe.")
 
     # Find the latest year
@@ -153,7 +168,10 @@ def rename_latest_carnegie_columns(df: pd.DataFrame):
     available_suffixes = {s for s, _ in found[latest_year]}
     missing = set(CARNEGIE_SUFFIXES) - available_suffixes
     if missing:
-        raise KeyError("Missing Carnegie variables",
+        log.get_logger(__name__).error(
+            "KeyError: Missing Carnegie variables.",
+            exc_info=True)
+        raise KeyError("Missing Carnegie variables.",
                        f"for year {latest_year}: {missing}")
 
     # Build rename map

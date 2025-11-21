@@ -4,6 +4,7 @@ import pandas as pd
 import psycopg
 from load_data.util_package import credentials as cred
 import os
+import load_data.util_package.logging as log
 
 
 def get_connection():
@@ -55,6 +56,7 @@ def load_data(path_file, year):
 
         return complete_data
     except Exception as e:
+        log.get_logger(__name__).error(f"Loading error: {e}", exc_info=True)
         print(f"Error occured loading data: {e}")
         raise
 
@@ -74,8 +76,12 @@ def create_table(query):
             conn.commit()
             print(f"{table_name} table created or already exists.")
     except psycopg.errors.DatabaseError as e:
+        log.get_logger(__name__).error(
+            f"Database error occurred: {e}", exc_info=True)
         print(f"Database error occurred: {e}")
     except Exception as e:
+        log.get_logger(__name__).error(
+            f"Non-Database error occurred: {e}", exc_info=True)
         print(f"Non-Database error occurred: {e}")
     finally:
         cur.close()
@@ -106,6 +112,8 @@ def insert_data(query, df):
             print(f"SUCCESS: {cur.rowcount} / {nrows} rows inserted or",
                   f"updated into {table_name}\n")
     except Exception as e:
+        log.get_logger(__name__).error(
+            f"Insertion failed at row: {e}", exc_info=True)
         print(f"Insert failed at row: {cur.rowcount}")
         print(f"Error: {e}")
         print(df.iloc[[cur.rowcount], :])

@@ -3,6 +3,7 @@ Functions to transform raw dataframe from college scorecard csv
 into insert-ready dataframe for different tables.
 """
 import pandas as pd
+import load_data.util_package.logging as log
 
 
 def clean_institutions(df):
@@ -55,8 +56,12 @@ def clean_institutions(df):
         sub_df = df[main_cols].copy()
         sub_df.loc[:, 'LAST_REPORTED'] = df['YEAR']
     except KeyError as e:
+        log.get_logger(__name__).error(
+            f"KeyError: Missing columns for institutions - {e}", exc_info=True)
         raise KeyError(f"Missing required columns for institutions: {e}")
     except Exception as e:
+        log.get_logger(__name__).error(
+            f"Unexpected Error: {e}", exc_info=True)
         print((f"Unexpected Error: {e}"))
         raise
 
@@ -87,8 +92,12 @@ def clean_financials(df):
         # Obtain relevant columns
         sub_df = df[id_cols + main_cols]
     except KeyError as e:
+        log.get_logger(__name__).error(
+            f"KeyError: Missing columns for financials - {e}", exc_info=True)
         raise KeyError(f"Missing required columns for financials: {e}")
     except Exception as e:
+        log.get_logger(__name__).error(
+            f"Unexpected Error: {e}", exc_info=True)
         print((f"Unexpected Error: {e}"))
         raise
 
@@ -118,8 +127,12 @@ def clean_academics(df):
         # Obtain relevant columns
         sub_df = df[id_cols + main_cols]
     except KeyError as e:
+        log.get_logger(__name__).error(
+            f"KeyError: Missing columns for academics - {e}", exc_info=True)
         raise KeyError(f"Missing required columns for academics: {e}")
     except Exception as e:
+        log.get_logger(__name__).error(
+            f"Unexpected Error: {e}", exc_info=True)
         print((f"Unexpected Error: {e}"))
         raise
 
@@ -152,8 +165,12 @@ def clean_demographics(df):
         # Obtain relevant columns
         sub_df = df[id_cols + main_cols]
     except KeyError as e:
+        log.get_logger(__name__).error(
+            f"KeyError: Missing columns for demographics - {e}", exc_info=True)
         raise KeyError(f"Missing required columns for demographics: {e}")
     except Exception as e:
+        log.get_logger(__name__).error(
+            f"Unexpected Error: {e}", exc_info=True)
         print((f"Unexpected Error: {e}"))
         raise
 

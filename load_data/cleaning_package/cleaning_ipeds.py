@@ -5,6 +5,7 @@ into insert-ready dataframe for different tables.
 
 import pandas as pd
 from load_data.util_package.ipeds_utils import rename_latest_carnegie_columns
+import load_data.util_package.logging as log
 
 
 def clean_directory(df):
@@ -179,6 +180,9 @@ def clean_directory(df):
     try:
         sub_df = df[main_cols].copy()
     except KeyError as e:
+        log.get_logger(__name__).error(
+            f"KeyError: Missing columns for institution directory - {e}",
+            exc_info=True)
         raise KeyError(
             f"Missing required columns for institution directory: {e}"
         )

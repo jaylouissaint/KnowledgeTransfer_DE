@@ -1,5 +1,10 @@
 '''This is the file where all the reusable queries are'''
 
+
+############################
+#### QUERY FOR LOADING ####
+###########################
+
 '''
 Institutions
 '''
@@ -312,4 +317,18 @@ SET
     IRPS_NHPI   = EXCLUDED.IRPS_NHPI,
     IRPS_2MOR   = EXCLUDED.IRPS_2MOR,
     IRPS_UNKN   = EXCLUDED.IRPS_UNKN
+"""
+
+
+#############################
+# QUERY FOR DASHBOARD #######
+#############################
+
+year_institute_summary = """
+SELECT sc_inst.CONTROL, iped_ins.STABBR, COUNT(*)
+FROM Institutions_IPEDS iped_ins
+LEFT JOIN Institutions sc_inst
+ON iped_ins.UNITID = sc_inst.UNITID
+WHERE iped_ins.LAST_REPORTED = %s
+GROUP BY sc_inst.CONTROL, iped_ins.STABBR
 """

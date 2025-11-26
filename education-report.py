@@ -24,7 +24,7 @@ selected_state = st.sidebar.selectbox(
     index=0
 )
 
-available_institution = utils.query_data(queries.get_institutes, params = (selected_year, selected_state))
+available_institution = utils.query_data(queries.get_institutes, params=(selected_year, selected_state))
 selected_institution = st.sidebar.selectbox(
     "Institution",
     options=available_institution["instnm"],

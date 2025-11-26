@@ -1,9 +1,9 @@
 '''This is the file where all the reusable queries are'''
 
 
-############################
-#### QUERY FOR LOADING ####
-###########################
+#######################
+## QUERY FOR LOADING ##
+#######################
 
 '''
 Institutions
@@ -327,21 +327,21 @@ SET
 get_years = """
 SELECT distinct YEAR
 FROM ACADEMICS
-ORDER BY YEAR DESC
+ORDER BY YEAR DESC;
 """
 
 get_states = """
 SELECT distinct STABBR
 FROM Institutions_IPEDS
 WHERE LAST_REPORTED = %s
-ORDER BY stabbr
+ORDER BY stabbr;
 """
 
 get_institutes = """
 SELECT distinct UNITID, INSTNM
 FROM Institutions_IPEDS
 WHERE LAST_REPORTED = %s and STABBR = %s
-ORDER BY INSTNM
+ORDER BY INSTNM;
 """
 
 year_institute_summary = """
@@ -350,5 +350,31 @@ FROM Institutions_IPEDS iped_ins
 LEFT JOIN Institutions sc_inst
 ON iped_ins.UNITID = sc_inst.UNITID
 WHERE iped_ins.LAST_REPORTED = %s
-GROUP BY sc_inst.CONTROL, iped_ins.STABBR
+GROUP BY sc_inst.CONTROL, iped_ins.STABBR;
+"""
+
+tuition_rate_summary = """
+SELECT iped_ins.stabbr, iped_ins.c_basic,
+    ROUND(AVG(tuitionfee_in),2) AS avg_in_state_tuition,
+    ROUND(AVG(tuitionfee_out),2) AS avg_out_state_tuition
+FROM financials AS f
+JOIN institutions_ipeds AS iped_ins
+    ON f.unitid = iped_ins.unitid
+WHERE f.year = %s
+    AND tuitionfee_in IS NOT NULL
+    AND tuitionfee_out IS NOT NULL
+GROUP BY iped_ins.stabbr, iped_ins.c_basic
+ORDER BY iped_ins.stabbr, iped_ins.c_basic;
+"""
+
+faculty_salary_map = """
+SELECT iped_ins.longitude, iped_ins.latitude,
+    iped_ins.stabbr,
+    ROUND(AVG(f.avgfascal),2) AS avg_faculty_salary
+FROM financials AS f
+JOIN institutions_ipeds AS iped_ins
+    ON f.unitid = iped_ins.unitid
+WHERE f.year = %s
+    AND avgfascal > 0
+GROUP BY iped_ins.longitude, iped_ins.latitude, iped_ins.stabbr;
 """

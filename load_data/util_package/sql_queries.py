@@ -324,6 +324,26 @@ SET
 # QUERY FOR DASHBOARD #######
 #############################
 
+get_years = """
+SELECT distinct YEAR
+FROM ACADEMICS
+ORDER BY YEAR DESC
+"""
+
+get_states = """
+SELECT distinct STABBR
+FROM Institutions_IPEDS
+WHERE LAST_REPORTED = %s
+ORDER BY stabbr
+"""
+
+get_institutes = """
+SELECT distinct UNITID, INSTNM
+FROM Institutions_IPEDS
+WHERE LAST_REPORTED = %s and STABBR = %s
+ORDER BY INSTNM
+"""
+
 year_institute_summary = """
 SELECT sc_inst.CONTROL, iped_ins.STABBR, COUNT(*)
 FROM Institutions_IPEDS iped_ins

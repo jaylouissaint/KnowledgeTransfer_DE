@@ -5,65 +5,102 @@ import load_data.util_package.sql_queries as queries
 
 st.title("📊 PostgreSQL Data Visualization with Streamlit")
 
-
 # ---- Global filter(s) ----
 st.sidebar.header("Filters")
-year = st.sidebar.number_input(
-    "LAST_REPORTED year",
-    min_value=2022,
-    max_value=2025,
-    value=2022,
-    step=1,
+
+available_years = utils.query_data(queries.get_years, params=())
+years = sorted(available_years["year"].unique())
+default_index = years.index(max(years))
+selected_year = st.sidebar.selectbox(
+    "Year (Start of Academic Year)",
+    options=years,   # or simply available_years["year"]
+    index=default_index  # default selection (you can change this)
 )
 
+available_states_in_year = utils.query_data(queries.get_states, params=(selected_year,))
+selected_state = st.sidebar.selectbox(
+    "State",
+    options=available_states_in_year["stabbr"],
+    index=0
+)
+
+available_institution = utils.query_data(queries.get_institutes, params = (selected_year, selected_state))
+selected_institution = st.sidebar.selectbox(
+    "Institution",
+    options=available_institution["instnm"],
+    index=0
+)
+
+if selected_institution:
+    selected_institution_unitid = available_institution.loc[
+        available_institution["instnm"] == selected_institution,
+        "unitid"
+        ].iloc[0]
+
+# PLOT 1
+st.subheader("Institutions by State and Type")
 """
 Summaries of how many colleges and universities are included in the data
 for the selected year, by state and type of institution (private, public, for-profit, and so on
 """
 
-query = queries.year_institute_summary   # your SQL with WHERE LAST_REPORTED = %s
-df = utils.query_data(query, params=(year,))
+# Get necessary data
+query = queries.year_institute_summary
+df = utils.query_data(query, params=(selected_year,))
 
-# Optional: rename columns to nicer names
 df = df.rename(columns={
     "control": "Type",
     "stabbr": "State",
-    "count": "Institution Count"  # make sure your SQL aliases COUNT(*) as n_institutions
+    "count": "Institution Count"
 })
 
-st.subheader("Summary table – institutions by state & control")
-st.dataframe(df, use_container_width=True)
+df["Type"] = df["Type"].fillna("Unknown")
 
-st.subheader("Institutions by State and Type (side-by-side bars)")
-
-chart = (
-    alt.Chart(df)
-    .mark_bar()
-    .encode(
-        x=alt.X("State:N", title="State"),
-        y=alt.Y("Institution Count:Q", title="Number of Institutions"),
-        color=alt.Color("Type:N", title="Institution Type"),
-        xOffset="Type:N",  # <-- this makes bars side-by-side instead of stacked
-        tooltip=["State", "Type", "Institution Count"]
+pivot_df = (
+    df.pivot_table(
+        index="State",
+        columns="Type",
+        values="Institution Count",
+        aggfunc="sum",
+        fill_value=0
     )
-    .properties(height=400)
+    .reset_index()
 )
 
-st.altair_chart(chart, use_container_width=True)
+pivot_df.columns.name = None
 
+st.dataframe(pivot_df, use_container_width=True, hide_index=True)
+
+# PLOT 2
+st.subheader("Summaries of tuition rate")
 """
 Summaries of current college tuition rates, by state and Carnegie Classification of institution.
 """
-st.subheader("Summaries of tuition rate")
 
+# PLOT 3
+st.subheader("Summary table of loan repayment performances")
 """
 A table showing the best- and worst-performing institutions by loan repayment rates.
 """
-st.subheader("Summary table of loan repayment performances")
 
-
+# PLOT 4
+st.subheader("Tutition rates and loan repayment rates over time")
 """
 Graphs showing how tuition rates and loan repayment rates have changed over time, 
 either in aggregate (such as averages for all institutions by type) or for selected institutions (such as the most expensive).
 """
-st.subheader("Tutition rates and loan repayment rates over time")
+
+# PLOT 5
+st.subheader("Carnegie Classification and Average SAT score")
+
+# PLOT 6
+st.subheader("Admission Rates and Tuition Fees")
+"""
+Scatterplot showing correlation between admission rate and tuition fees
+"""
+
+# PLOT 7
+st.subheader("Map of Faculty Salaries")
+"""
+Map showing faculty salaries across the US
+"""

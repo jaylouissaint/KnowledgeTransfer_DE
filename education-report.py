@@ -21,24 +21,32 @@ available_states_in_year = utils.query_data(queries.get_states,
                                             params=(selected_year,))
 selected_state = st.sidebar.selectbox(
     "State",
-    options=available_states_in_year["stabbr"],
+    options=[""] + available_states_in_year["stabbr"].to_list(),
     index=0
 )
 
-available_institution = utils.query_data(queries.get_institutes,
-                                         params=(selected_year,
-                                                 selected_state))
+if selected_state != "":
+    available_institution = utils.query_data(queries.get_institutes_by_state,
+                                             params=(selected_year,
+                                                     selected_state))
+else:
+    available_institution = utils.query_data(queries.get_all_institutes,
+                                             params=(selected_year,))
+    print(available_institution)
+
 selected_institution = st.sidebar.selectbox(
     "Institution",
-    options=available_institution["instnm"],
+    options=[""] + available_institution["instnm"].tolist(),
     index=0
 )
 
-if selected_institution:
+if selected_institution != "":
     selected_institution_unitid = available_institution.loc[
         available_institution["instnm"] == selected_institution,
         "unitid"
         ].iloc[0]
+else:
+    selected_institution_unitid = None
 
 # PLOT 1
 st.subheader("Institutions by State and Type")
@@ -124,6 +132,24 @@ st.subheader("Admission Rates and Tuition Fees")
 """
 Scatterplot showing correlation between admission rate and tuition fees
 """
+tuition_type = st.radio(
+    "Select tuition type:",
+    options=["In-state", "Out-of-state"],
+    horizontal=True
+)
+
+rate_fee_query = queries.tuition_admrate
+df = utils.query_data(rate_fee_query, params=(selected_year,))
+
+
+chart = utils.make_tuition_adm_plot(
+    df,
+    institution_selected=selected_institution_unitid,
+    state_selected=selected_state,
+    tuition_type=tuition_type
+)
+
+st.altair_chart(chart, use_container_width=True)
 
 # PLOT 7
 st.subheader("Map of Faculty Salaries")

@@ -1,5 +1,6 @@
 
 import pandas as pd
+import numpy as np
 import psycopg
 import altair as alt
 import os
@@ -47,21 +48,33 @@ def make_tuition_adm_plot(
     else:
         tuition_col = "tuitionfee_out"
 
-    # Create a boolean column indicating which points are highlighted
-    selected_mask = pd.Series(False, index=df.index)
+    # Create a boolean column indicating how points should be highlighted
+    selected_mask_state = pd.Series(False, index=df.index)
+    selected_mask_inst = pd.Series(False, index=df.index)
 
     if institution_selected:
-        selected_mask |= df["instnm"] == institution_selected
+        selected_mask_inst |= df["unitid"] == institution_selected
 
     if state_selected:
-        selected_mask |= df["stabbr"] == state_selected
+        selected_mask_state |= df["stabbr"] == state_selected
 
-    # If no filter is selected → show normal scatterplot
-    if not selected_mask.any():
-        df["selected"] = True
-    else:
-        df["selected"] = selected_mask
+    # NEW: 3-category column
+    df["selection_status"] = np.select(
+        [
+            selected_mask_inst,      # institution selected
+            selected_mask_state      # state selected
+        ],
+        [
+            "institution",           # label 1
+            "state"                  # label 2
+        ],
+        default="none"               # no highlight
+    )
 
+    color_scale = alt.Scale(
+        domain=["institution", "state", "none"],
+        range=["red", "steelblue", "lightgray"]
+    )
     # Base scatterplot
     base = (
         alt.Chart(df)
@@ -70,22 +83,18 @@ def make_tuition_adm_plot(
             x=alt.X(f"{tuition_col}:Q", title=f"{tuition_type} Tuition Fee"),
             y=alt.Y("adm_rate:Q", title="Admission Rate"),
             tooltip=["instnm", "stabbr", tuition_col, "adm_rate"],
-            color=alt.condition(
-                "datum.selected",
-                alt.value("steelblue"),
-                alt.value("lightgray")
-            ),
+            color=alt.Color("selection_status:N", scale=color_scale),
             opacity=alt.condition(
-                "datum.selected",
+                alt.datum.selection_status != "none",
                 alt.value(1.0),
                 alt.value(0.5)
-            ),
+            )
         )
     )
 
     # Labels for selected institutions
     labels = (
-        alt.Chart(df[df["selected"]])
+        alt.Chart(df[df["selection_status"] == "institution"])
         .mark_text(dx=5, dy=-5)
         .encode(
             x=f"{tuition_col}:Q",

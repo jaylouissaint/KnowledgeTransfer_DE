@@ -59,21 +59,24 @@ def make_tuition_adm_plot(
         selected_mask_state |= df["stabbr"] == state_selected
 
     # NEW: 3-category column
-    df["selection_status"] = np.select(
+    state_legend = f"State selected: {state_selected}"
+    insitution_legend = "Institution selected"
+    
+    df["Filter"] = np.select(
         [
             selected_mask_inst,      # institution selected
             selected_mask_state      # state selected
         ],
         [
-            "institution",           # label 1
-            "state"                  # label 2
+            insitution_legend,           # label 1
+            state_legend                 # label 2
         ],
-        default="none"               # no highlight
+        default="others"               # no highlight
     )
 
     color_scale = alt.Scale(
-        domain=["institution", "state", "none"],
-        range=["red", "steelblue", "lightgray"]
+        domain=[state_legend, insitution_legend, "others"],
+        range=["steelblue", "red", "lightgray"]
     )
     # Base scatterplot
     base = (
@@ -83,7 +86,7 @@ def make_tuition_adm_plot(
             x=alt.X(f"{tuition_col}:Q", title=f"{tuition_type} Tuition Fee"),
             y=alt.Y("adm_rate:Q", title="Admission Rate"),
             tooltip=["instnm", "stabbr", tuition_col, "adm_rate"],
-            color=alt.Color("selection_status:N", scale=color_scale),
+            color=alt.Color("Filter:N", scale=color_scale),
             opacity=alt.condition(
                 alt.datum.selection_status != "none",
                 alt.value(1.0),
@@ -94,11 +97,12 @@ def make_tuition_adm_plot(
 
     # Labels for selected institutions
     labels = (
-        alt.Chart(df[df["selection_status"] == "institution"])
+        alt.Chart(df[df["Filter"] == insitution_legend])
         .mark_text(dx=5, dy=-5)
         .encode(
             x=f"{tuition_col}:Q",
-            y="adm_rate:Q"
+            y="adm_rate:Q",
+            text="instnm:N"
         )
     )
 

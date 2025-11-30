@@ -190,11 +190,10 @@ tuition_type_over_time = st.radio(
     key="tuition_over_time"
 )
 
-# Query should return something like:
-#   year, control, avg_in_state_tuition, avg_out_state_tuition, avg_repayment_rate
+
 tuition_repay_query = queries.tuition_repayment_over_time
 
-# If your SQL takes a state filter, pass it; otherwise adjust params accordingly
+# state filter
 if selected_state:
     tuition_repay_df = utils.query_data(
         tuition_repay_query,

@@ -192,18 +192,16 @@ tuition_type_over_time = st.radio(
 
 tuition_repay_query = queries.tuition_repayment_over_time
 
+tuition_repay_df = utils.query_data(
+    tuition_repay_query,
+    params=()
+)
+
+
 # state filter
 if selected_state:
-    tuition_repay_df = utils.query_data(
-        tuition_repay_query,
-        params=(selected_state, selected_state)
-    )
-else:
-    # pass None so condition (%s IS NULL) becomes TRUE and doesn't filter
-    tuition_repay_df = utils.query_data(
-        tuition_repay_query,
-        params=(None, None)
-    )
+    tuition_repay_df = tuition_repay_df[tuition_repay_df["stabbr"] == selected_state]
+
 
 
 if tuition_repay_df.empty:

@@ -123,7 +123,7 @@ loan_df = utils.query_data(loan_perf_query, params=(selected_year,))
 if loan_df.empty:
     st.info("No loan repayment data available for the selected year.")
 else:
-    # Optional: filter by state if one is selected
+    # filter by state if one is selected
     if selected_state:
         loan_df = loan_df[loan_df["stabbr"] == selected_state]
 
@@ -154,7 +154,7 @@ else:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("**🏆 Best-performing institutions (by repayment rate)**")
+        st.markdown("**Best-performing institutions (by repayment rate)**")
         st.dataframe(
             best_df[["Institution", "State", "Type", "Repayment Rate"]],
             use_container_width=True,
@@ -162,7 +162,7 @@ else:
         )
 
     with col2:
-        st.markdown("**⚠️ Worst-performing institutions (by repayment rate)**")
+        st.markdown("**Worst-performing institutions (by repayment rate)**")
         st.dataframe(
             worst_df[["Institution", "State", "Type", "Repayment Rate"]],
             use_container_width=True,
@@ -174,8 +174,7 @@ else:
 st.subheader("Tutition rates and loan repayment rates over time")
 """
 Graphs showing how tuition rates and loan repayment rates changed over time,
-either in aggregate (such as averages for all institutions by type) or for
-selected institutions (such as the most expensive).
+in aggregate (such as averages for all institutions by type)
 """
 # Controls: choose aggregation level and tuition type
 agg_level = st.radio(
@@ -289,7 +288,6 @@ else:
     )
 
     st.altair_chart(tuition_chart & repay_chart, use_container_width=True)
-
 
 # PLOT 5
 st.subheader("Carnegie Classification and Average SAT score")

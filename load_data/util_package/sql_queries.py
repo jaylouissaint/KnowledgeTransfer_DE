@@ -337,6 +337,7 @@ WHERE LAST_REPORTED = %s
 ORDER BY stabbr;
 """
 
+
 get_institutes_by_state = """
 SELECT distinct UNITID, INSTNM
 FROM Institutions_IPEDS

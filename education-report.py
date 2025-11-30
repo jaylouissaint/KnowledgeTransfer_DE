@@ -50,16 +50,19 @@ else:
     selected_institution_unitid = None
 
 # PLOT 1
-st.subheader("Institutions by State and Type")
 """
 Summaries of how many colleges and universities are included in the data
 for the selected year, by state and type of institution (private, public,
 for-profit, and so on)
 """
 
+most_recent_year = queries.get_most_recent_year
+max_year = utils.query_data(most_recent_year, params=())['max'].to_list()[0]
+st.subheader(f"Institutions by State and Type ({max_year})")
+
 # Get necessary data
 inst_summary_query = queries.year_institute_summary
-df = utils.query_data(inst_summary_query, params=(selected_year,))
+df = utils.query_data(inst_summary_query, params=(max_year,))
 
 df = df.rename(columns={
     "control": "Type",

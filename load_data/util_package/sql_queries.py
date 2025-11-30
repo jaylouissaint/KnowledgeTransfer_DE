@@ -330,6 +330,11 @@ FROM ACADEMICS
 ORDER BY YEAR DESC;
 """
 
+get_most_recent_year = """
+SELECT MAX(LAST_REPORTED)
+FROM Institutions
+"""
+
 get_states = """
 SELECT distinct STABBR
 FROM Institutions_IPEDS

@@ -2,6 +2,8 @@ import streamlit as st
 import load_data.util_package.dashboard_utils as utils
 import load_data.util_package.sql_queries as queries
 import pydeck as pdk
+import altair as alt
+
 
 st.title("📊 PostgreSQL Data Visualization with Streamlit")
 
@@ -115,7 +117,57 @@ st.subheader("Summary table of loan repayment performances")
 A table showing the best- and worst-performing institutions
 by loan repayment rates.
 """
+loan_perf_query = queries.loan_repayment_performance
+loan_df = utils.query_data(loan_perf_query, params=(selected_year,))
 
+if loan_df.empty:
+    st.info("No loan repayment data available for the selected year.")
+else:
+    # Optional: filter by state if one is selected
+    if selected_state:
+        loan_df = loan_df[loan_df["stabbr"] == selected_state]
+
+    # Clean up / rename columns
+    loan_df = loan_df.rename(columns={
+        "instnm": "Institution",
+        "stabbr": "State",
+        "control": "Type",
+        "repayment_rate": "Repayment Rate"
+    })
+
+    # If repayment is 0–1, you can convert to %
+    if loan_df["Repayment Rate"].max() <= 1.0:
+        loan_df["Repayment Rate"] = loan_df["Repayment Rate"] * 100
+
+    # Sort for best / worst
+    top_n = 10
+    best_df = (
+        loan_df.sort_values("Repayment Rate", ascending=False)
+               .head(top_n)
+    )
+    worst_df = (
+        loan_df.sort_values("Repayment Rate", ascending=True)
+               .head(top_n)
+    )
+
+    # Display side by side
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("**🏆 Best-performing institutions (by repayment rate)**")
+        st.dataframe(
+            best_df[["Institution", "State", "Type", "Repayment Rate"]],
+            use_container_width=True,
+            hide_index=True
+        )
+
+    with col2:
+        st.markdown("**⚠️ Worst-performing institutions (by repayment rate)**")
+        st.dataframe(
+            worst_df[["Institution", "State", "Type", "Repayment Rate"]],
+            use_container_width=True,
+            hide_index=True
+        )
 
 
 # PLOT 4
@@ -125,6 +177,119 @@ Graphs showing how tuition rates and loan repayment rates changed over time,
 either in aggregate (such as averages for all institutions by type) or for
 selected institutions (such as the most expensive).
 """
+# Controls: choose aggregation level and tuition type
+agg_level = st.radio(
+    "Aggregate by:",
+    options=["All Institutions", "Institution Type (Control)"],
+    horizontal=True
+)
+
+tuition_type_over_time = st.radio(
+    "Tuition to plot:",
+    options=["In-state", "Out-of-state"],
+    horizontal=True,
+    key="tuition_over_time"
+)
+
+# Query should return something like:
+#   year, control, avg_in_state_tuition, avg_out_state_tuition, avg_repayment_rate
+tuition_repay_query = queries.tuition_repayment_over_time
+
+# If your SQL takes a state filter, pass it; otherwise adjust params accordingly
+if selected_state:
+    tuition_repay_df = utils.query_data(
+        tuition_repay_query,
+        params=(selected_state,)
+    )
+else:
+    tuition_repay_df = utils.query_data(
+        tuition_repay_query,
+        params=()
+    )
+
+if tuition_repay_df.empty:
+    st.info("No tuition/repayment trend data available for the selected filters.")
+else:
+    # Basic cleanup / rename
+    tuition_repay_df = tuition_repay_df.rename(columns={
+        "year": "Year",
+        "control": "Type",
+        "avg_in_state_tuition": "Avg In-State Tuition",
+        "avg_out_state_tuition": "Avg Out-of-State Tuition",
+        "avg_repayment_rate": "Avg Repayment Rate"
+    })
+
+    # If Avg Repayment is 0–1, convert to percentage
+    if tuition_repay_df["Avg Repayment Rate"].max() <= 1.0:
+        tuition_repay_df["Avg Repayment Rate"] = (
+            tuition_repay_df["Avg Repayment Rate"] * 100
+        )
+
+    # Choose tuition metric
+    if tuition_type_over_time == "In-state":
+        tuition_col = "Avg In-State Tuition"
+    else:
+        tuition_col = "Avg Out-of-State Tuition"
+
+    # Decide grouping based on aggregation level
+    if agg_level == "All Institutions":
+        # Aggregate across all Types if not already aggregated
+        group_cols = ["Year"]
+        df_agg = (tuition_repay_df
+                  .groupby(group_cols, as_index=False)
+                  .agg({
+                      tuition_col: "mean",
+                      "Avg Repayment Rate": "mean"
+                  }))
+        color_encoding = alt.value("steelblue")  # single color
+    else:
+        # Group by Year + Type (Public / Private / For-profit)
+        group_cols = ["Year", "Type"]
+        df_agg = (tuition_repay_df
+                  .groupby(group_cols, as_index=False)
+                  .agg({
+                      tuition_col: "mean",
+                      "Avg Repayment Rate": "mean"
+                  }))
+        color_encoding = "Type:N"
+
+    # Tuition chart over time
+    tuition_chart = (
+        alt.Chart(df_agg)
+        .mark_line(point=True)
+        .encode(
+            x=alt.X("Year:O", title="Year"),
+            y=alt.Y(f"{tuition_col}:Q", title=tuition_col),
+            color=color_encoding,
+            tooltip=["Year", "Type", tuition_col] if "Type" in df_agg.columns
+                    else ["Year", tuition_col]
+        )
+        .properties(
+            height=250,
+            title="Average Tuition Over Time"
+        )
+    )
+
+    # Repayment chart over time
+    repay_chart = (
+        alt.Chart(df_agg)
+        .mark_line(point=True)
+        .encode(
+            x=alt.X("Year:O", title="Year"),
+            y=alt.Y("Avg Repayment Rate:Q", title="Avg Repayment Rate (%)"),
+            color=color_encoding,
+            tooltip=["Year", "Type", "Avg Repayment Rate"] if "Type"
+                    in df_agg.columns
+                    else ["Year", "Avg Repayment Rate"]
+        )
+        .properties(
+            height=250,
+            title="Average Loan Repayment Rate Over Time"
+        )
+    )
+
+    st.altair_chart(tuition_chart & repay_chart, use_container_width=True)
+
 
 # PLOT 5
 st.subheader("Carnegie Classification and Average SAT score")

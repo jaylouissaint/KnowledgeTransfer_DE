@@ -196,13 +196,15 @@ tuition_repay_query = queries.tuition_repayment_over_time
 if selected_state:
     tuition_repay_df = utils.query_data(
         tuition_repay_query,
-        params=(selected_state,)
+        params=(selected_state, selected_state)
     )
 else:
+    # pass None so condition (%s IS NULL) becomes TRUE and doesn't filter
     tuition_repay_df = utils.query_data(
         tuition_repay_query,
-        params=()
+        params=(None, None)
     )
+
 
 if tuition_repay_df.empty:
     st.info("No tuition/repayment trend data available")

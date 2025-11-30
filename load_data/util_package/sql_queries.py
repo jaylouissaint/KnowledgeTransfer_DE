@@ -429,8 +429,8 @@ Tuition and loan repayment trends over time.
 
 Returned columns:
     year,
-    control,        -- institution type (Public / Private / For-profit)
-    stabbr,         -- state
+    control,
+    stabbr,
     avg_in_state_tuition,
     avg_out_state_tuition,
     avg_repayment_rate
@@ -450,6 +450,7 @@ JOIN institutions_ipeds AS ipd
 WHERE fin.tuitionfee_in  IS NOT NULL
   AND fin.tuitionfee_out IS NOT NULL
   AND (fin.cdr2 IS NOT NULL OR fin.cdr3 IS NOT NULL)
+  AND (%s IS NULL OR ipd.stabbr = %s)
 GROUP BY
     fin.year,
     inst.control,

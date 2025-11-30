@@ -399,3 +399,65 @@ WHERE f.year = %s
     AND avgfascal > 0
 GROUP BY iped_ins.longitude, iped_ins.latitude, iped_ins.stabbr;
 """
+
+loan_repayment_performance = """
+/*
+Best / worst loan repayment performance by institution for a given year.
+
+repayment_rate is defined as:
+    1 - COALESCE(CDR3, CDR2)
+
+Returned columns:
+    unitid, instnm, stabbr, control, repayment_rate
+*/
+SELECT
+    ipd.unitid,
+    ipd.instnm,
+    ipd.stabbr,
+    inst.control,
+    1 - COALESCE(fin.cdr3, fin.cdr2) AS repayment_rate
+FROM financials AS fin
+JOIN institutions AS inst
+    ON fin.unitid = inst.unitid
+JOIN institutions_ipeds AS ipd
+    ON fin.unitid = ipd.unitid
+WHERE fin.year = %s
+  AND (fin.cdr2 IS NOT NULL OR fin.cdr3 IS NOT NULL);
+"""
+
+tuition_repayment_over_time = """
+/*
+Tuition and loan repayment trends over time.
+
+Returned columns:
+    year,
+    control,        -- institution type (Public / Private / For-profit)
+    stabbr,         -- state
+    avg_in_state_tuition,
+    avg_out_state_tuition,
+    avg_repayment_rate
+*/
+SELECT
+    fin.year,
+    inst.control,
+    ipd.stabbr,
+    AVG(fin.tuitionfee_in)  AS avg_in_state_tuition,
+    AVG(fin.tuitionfee_out) AS avg_out_state_tuition,
+    AVG(1 - COALESCE(fin.cdr3, fin.cdr2)) AS avg_repayment_rate
+FROM financials AS fin
+JOIN institutions AS inst
+    ON fin.unitid = inst.unitid
+JOIN institutions_ipeds AS ipd
+    ON fin.unitid = ipd.unitid
+WHERE fin.tuitionfee_in  IS NOT NULL
+  AND fin.tuitionfee_out IS NOT NULL
+  AND (fin.cdr2 IS NOT NULL OR fin.cdr3 IS NOT NULL)
+GROUP BY
+    fin.year,
+    inst.control,
+    ipd.stabbr
+ORDER BY
+    fin.year,
+    inst.control,
+    ipd.stabbr;
+"""

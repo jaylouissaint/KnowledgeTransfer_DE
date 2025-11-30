@@ -366,12 +366,14 @@ GROUP BY sc_inst.CONTROL, iped_ins.STABBR;
 
 tuition_rate_summary = """
 SELECT iped_ins.stabbr, iped_ins.c_basic,
-    ROUND(AVG(tuitionfee_in),2) AS avg_in_state_tuition,
-    ROUND(AVG(tuitionfee_out),2) AS avg_out_state_tuition
+    ROUND(COALESCE(AVG(tuitionfee_in),0),2) AS avg_in_state_tuition,
+    ROUND(COALESCE(AVG(tuitionfee_out),0),2) AS avg_out_state_tuition
 FROM financials AS f
 JOIN institutions_ipeds AS iped_ins
     ON f.unitid = iped_ins.unitid
 WHERE f.year = %s
+    AND (iped_ins.stabbr = COALESCE(NULLIF(%s, ''), iped_ins.stabbr))
+    AND (iped_ins.instnm = COALESCE(NULLIF(%s, ''), iped_ins.instnm))
     AND tuitionfee_in IS NOT NULL
     AND tuitionfee_out IS NOT NULL
 GROUP BY iped_ins.stabbr, iped_ins.c_basic
@@ -394,11 +396,13 @@ WHERE acad.year = %s and fin.year = acad.year
 faculty_salary_map = """
 SELECT iped_ins.longitude, iped_ins.latitude,
     iped_ins.stabbr,
-    ROUND(AVG(f.avgfascal),2) AS avg_faculty_salary
+    ROUND(COALESCE(AVG(f.avgfascal), 0),2) AS avg_faculty_salary
 FROM financials AS f
 JOIN institutions_ipeds AS iped_ins
     ON f.unitid = iped_ins.unitid
 WHERE f.year = %s
+    AND (iped_ins.stabbr = COALESCE(NULLIF(%s, ''), iped_ins.stabbr))
+    AND (iped_ins.instnm = COALESCE(NULLIF(%s, ''), iped_ins.instnm))
     AND avgfascal > 0
 GROUP BY iped_ins.longitude, iped_ins.latitude, iped_ins.stabbr;
 """

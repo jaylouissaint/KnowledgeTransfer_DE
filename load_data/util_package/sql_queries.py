@@ -337,12 +337,20 @@ WHERE LAST_REPORTED = %s
 ORDER BY stabbr;
 """
 
-get_institutes = """
+get_institutes_by_state = """
 SELECT distinct UNITID, INSTNM
 FROM Institutions_IPEDS
 WHERE LAST_REPORTED = %s and STABBR = %s
 ORDER BY INSTNM;
 """
+
+get_all_institutes = """
+SELECT distinct UNITID, INSTNM
+FROM Institutions_IPEDS
+WHERE LAST_REPORTED = %s
+ORDER BY INSTNM;
+"""
+
 
 year_institute_summary = """
 SELECT sc_inst.CONTROL, iped_ins.STABBR, COUNT(*)
@@ -365,6 +373,19 @@ WHERE f.year = %s
     AND tuitionfee_out IS NOT NULL
 GROUP BY iped_ins.stabbr, iped_ins.c_basic
 ORDER BY iped_ins.stabbr, iped_ins.c_basic;
+"""
+
+tuition_admrate = """
+SELECT inst.unitid, ipd.instnm, ipd.stabbr,
+acad.adm_rate, fin.tuitionfee_in, fin.tuitionfee_out
+FROM INSTITUTIONS inst
+LEFT JOIN ACADEMICS acad
+ON inst.unitid = acad.unitid
+LEFT JOIN FINANCIALS fin
+ON inst.unitid = fin.unitid
+LEFT JOIN Institutions_IPEDS ipd
+ON inst.unitid = ipd.unitid
+WHERE acad.year = %s and fin.year = acad.year
 """
 
 faculty_salary_map = """

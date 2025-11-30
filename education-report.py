@@ -20,7 +20,7 @@ selected_year = st.sidebar.selectbox(
 )
 
 available_states_in_year = utils.query_data(queries.get_states,
-                                            params=(selected_year,))
+                                            params=())
 selected_state = st.sidebar.selectbox(
     "State",
     options=[""] + available_states_in_year["stabbr"].to_list(),
@@ -29,11 +29,10 @@ selected_state = st.sidebar.selectbox(
 
 if selected_state != "":
     available_institution = utils.query_data(queries.get_institutes_by_state,
-                                             params=(selected_year,
-                                                     selected_state))
+                                             params=(selected_state,))
 else:
     available_institution = utils.query_data(queries.get_all_institutes,
-                                             params=(selected_year,))
+                                             params=())
     print(available_institution)
 
 selected_institution = st.sidebar.selectbox(

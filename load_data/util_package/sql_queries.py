@@ -333,22 +333,19 @@ ORDER BY YEAR DESC;
 get_states = """
 SELECT distinct STABBR
 FROM Institutions_IPEDS
-WHERE LAST_REPORTED = %s
 ORDER BY stabbr;
 """
-
 
 get_institutes_by_state = """
 SELECT distinct UNITID, INSTNM
 FROM Institutions_IPEDS
-WHERE LAST_REPORTED = %s and STABBR = %s
+WHERE STABBR = %s
 ORDER BY INSTNM;
 """
 
 get_all_institutes = """
 SELECT distinct UNITID, INSTNM
 FROM Institutions_IPEDS
-WHERE LAST_REPORTED = %s
 ORDER BY INSTNM;
 """
 

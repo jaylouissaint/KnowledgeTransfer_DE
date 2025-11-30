@@ -143,11 +143,11 @@ else:
     top_n = 10
     best_df = (
         loan_df.sort_values("Repayment Rate", ascending=False)
-               .head(top_n)
+        .head(top_n)
     )
     worst_df = (
         loan_df.sort_values("Repayment Rate", ascending=True)
-               .head(top_n)
+        .head(top_n)
     )
 
     # Display side by side
@@ -206,7 +206,7 @@ else:
     )
 
 if tuition_repay_df.empty:
-    st.info("No tuition/repayment trend data available for the selected filters.")
+    st.info("No tuition/repayment trend data available")
 else:
     # Basic cleanup / rename
     tuition_repay_df = tuition_repay_df.rename(columns={
@@ -260,7 +260,7 @@ else:
             y=alt.Y(f"{tuition_col}:Q", title=tuition_col),
             color=color_encoding,
             tooltip=["Year", "Type", tuition_col] if "Type" in df_agg.columns
-                    else ["Year", tuition_col]
+            else ["Year", tuition_col]
         )
         .properties(
             height=250,
@@ -276,9 +276,9 @@ else:
             x=alt.X("Year:O", title="Year"),
             y=alt.Y("Avg Repayment Rate:Q", title="Avg Repayment Rate (%)"),
             color=color_encoding,
-            tooltip=["Year", "Type", "Avg Repayment Rate"] if "Type"
-                    in df_agg.columns
-                    else ["Year", "Avg Repayment Rate"]
+            tooltip=(["Year", "Type", "Avg Repayment Rate"]
+                     if "Type" in df_agg.columns
+                     else ["Year", "Avg Repayment Rate"])
         )
         .properties(
             height=250,

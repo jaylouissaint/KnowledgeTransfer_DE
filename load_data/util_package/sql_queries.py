@@ -449,3 +449,18 @@ ORDER BY
     inst.control,
     ipd.stabbr;
 """
+
+
+SAT_avg_carnegie = """
+/* Carnegie Classification and Average SAT score */
+
+SELECT ipeds.C_BASIC AS carnegie_basic,
+    AVG(academic.SAT_AVG) AS avg_sat_score
+FROM Institutions_IPEDS ipeds
+JOIN Academics academic
+    ON ipeds.unitid = academic.unitid
+WHERE academic.SAT_AVG IS NOT NULL
+GROUP BY ipeds.C_BASIC
+ORDER BY ipeds.C_BASIC
+
+"""

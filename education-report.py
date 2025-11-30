@@ -289,6 +289,20 @@ else:
 
 # PLOT 5
 st.subheader("Carnegie Classification and Average SAT score")
+""" Table showing the average SAT scores for colleges with 
+each Carnegie Basic Classification
+"""
+car_sat_summary_query = queries.SAT_avg_carnegie
+car_sat_summary_df = utils.query_data(car_sat_summary_query)
+
+car_sat_summary_df = car_sat_summary_df.rename(
+    columns={"carnegie_basic": "Carnegie Classification",
+             "avg_sat_score": "Average SAT Score"})
+car_sat_summary_df["Average SAT Score"] = (
+    car_sat_summary_df["Average SAT Score"].map(lambda x: f"{x:,.0f}"))
+
+st.dataframe(car_sat_summary_df, use_container_width=True, hide_index=True)
+
 
 # PLOT 6
 st.subheader("Admission Rates and Tuition Fees")

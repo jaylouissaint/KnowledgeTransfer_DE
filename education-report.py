@@ -108,6 +108,8 @@ A table showing the best- and worst-performing institutions
 by loan repayment rates.
 """
 
+
+
 # PLOT 4
 st.subheader("Tutition rates and loan repayment rates over time")
 """

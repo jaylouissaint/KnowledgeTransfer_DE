@@ -3,6 +3,7 @@ import load_data.util_package.dashboard_utils as utils
 import load_data.util_package.sql_queries as queries
 import pydeck as pdk
 import altair as alt
+import pandas as pd
 
 
 st.title("📊 PostgreSQL Data Visualization with Streamlit")
@@ -96,7 +97,9 @@ Classification of institution.
 # Get necessary data
 tuition_summary_query = queries.tuition_rate_summary
 tuition_summary_df = utils.query_data(tuition_summary_query,
-                                      params=(selected_year,))
+                                      params=(selected_year,
+                                              selected_state,
+                                              selected_institution))
 
 # map to get "$"
 tuition_summary_df["avg_in_state_tuition"] = tuition_summary_df[
@@ -203,9 +206,8 @@ tuition_repay_df = utils.query_data(
 
 # state filter
 if selected_state:
-    tuition_repay_df = tuition_repay_df[tuition_repay_df["stabbr"] == selected_state]
-
-
+    tuition_repay_df = tuition_repay_df[tuition_repay_df["stabbr"]
+                                        == selected_state]
 
 if tuition_repay_df.empty:
     st.info("No tuition/repayment trend data available")
@@ -296,7 +298,7 @@ else:
 
 # PLOT 5
 st.subheader("Carnegie Classification and Average SAT score")
-""" Table showing the average SAT scores for colleges with 
+""" Table showing the average SAT scores for colleges with
 each Carnegie Basic Classification
 """
 car_sat_summary_query = queries.SAT_avg_carnegie
@@ -306,9 +308,9 @@ car_sat_summary_df = car_sat_summary_df.rename(
     columns={"carnegie_basic": "Carnegie Classification",
              "avg_sat_score": "Average SAT Score"})
 car_sat_summary_df["Average SAT Score"] = (
-    car_sat_summary_df["Average SAT Score"].map(lambda x: f"{x:,.0f}"))
+    car_sat_summary_df["Average SAT Score"].round(0))
 
-st.dataframe(car_sat_summary_df, use_container_width=True, hide_index=True)
+st.data_editor(car_sat_summary_df, use_container_width=True, hide_index=True)
 
 
 # PLOT 6
@@ -342,20 +344,30 @@ Map showing faculty salaries across the US
 """
 faculty_salary_query = queries.faculty_salary_map
 map_faculty_salary_df = utils.query_data(faculty_salary_query,
-                                         params=(selected_year,))
+                                         params=(selected_year,
+                                                 selected_state,
+                                                 selected_institution))
+map_faculty_salary_df["avg_faculty_salary"] = pd.to_numeric(
+    map_faculty_salary_df["avg_faculty_salary"], errors="coerce")
 
 # Normalize salary → darker color for higher salary
 min_sal = map_faculty_salary_df["avg_faculty_salary"].min()
 max_sal = map_faculty_salary_df["avg_faculty_salary"].max()
 
-map_faculty_salary_df["color"] = map_faculty_salary_df["avg_faculty_salary"
-                                                       ].apply(
-    lambda s: [
+
+def salary_to_color(s):
+    if min_sal == max_sal:
+        return [200, 200, 200]   # light grey for missing salary
+    return [
         0,
         int(100 + 155 * (s - min_sal) / (max_sal - min_sal)),
         int(180 - 120 * (s - min_sal) / (max_sal - min_sal))
     ]
-)
+
+
+map_faculty_salary_df["color"] = map_faculty_salary_df["avg_faculty_salary"
+                                                       ].apply(salary_to_color)
+print(map_faculty_salary_df["color"])
 
 layer = pdk.Layer(
     "ScatterplotLayer",

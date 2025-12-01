@@ -257,20 +257,27 @@ else:
 
     # Tuition chart over time
     tuition_chart = (
-        alt.Chart(df_agg)
-        .mark_line(point=True)
-        .encode(
-            x=alt.X("Year:O", title="Year"),
-            y=alt.Y(f"{tuition_col}:Q", title=tuition_col),
-            color=color_encoding,
-            tooltip=["Year", "Type", tuition_col] if "Type" in df_agg.columns
+    alt.Chart(df_agg)
+    .mark_line(point=True)
+    .encode(
+        x=alt.X("Year:O", title="Year"),
+        y=alt.Y(
+            f"{tuition_col}:Q",
+            title=tuition_col,
+            scale=alt.Scale(domain=[5000, df_agg[tuition_col].max()])
+        ),
+        color=color_encoding,
+        tooltip=(
+            ["Year", "Type", tuition_col]
+            if "Type" in df_agg.columns
             else ["Year", tuition_col]
         )
-        .properties(
-            height=250,
-            title="Average Tuition Over Time"
-        )
     )
+    .properties(
+        height=250,
+        title="Average Tuition Over Time"
+    )
+)
 
     # Repayment chart over time
     repay_chart = (

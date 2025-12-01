@@ -276,11 +276,15 @@ else:
         .mark_line(point=True)
         .encode(
             x=alt.X("Year:O", title="Year"),
-            y=alt.Y("Avg Repayment Rate:Q", title="Avg Repayment Rate (%)"),
+            y=alt.Y(
+                "Avg Repayment Rate:Q",
+                title="Avg Repayment Rate (%)",
+                scale=alt.Scale(domain=[70, df_agg["Avg Repayment Rate"].max()])
+            ),
             color=color_encoding,
             tooltip=(["Year", "Type", "Avg Repayment Rate"]
-                     if "Type" in df_agg.columns
-                     else ["Year", "Avg Repayment Rate"])
+                    if "Type" in df_agg.columns
+                    else ["Year", "Avg Repayment Rate"])
         )
         .properties(
             height=250,

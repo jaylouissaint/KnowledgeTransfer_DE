@@ -257,27 +257,27 @@ else:
 
     # Tuition chart over time
     tuition_chart = (
-    alt.Chart(df_agg)
-    .mark_line(point=True)
-    .encode(
-        x=alt.X("Year:O", title="Year"),
-        y=alt.Y(
-            f"{tuition_col}:Q",
-            title=tuition_col,
-            scale=alt.Scale(domain=[5000, df_agg[tuition_col].max()])
-        ),
-        color=color_encoding,
-        tooltip=(
-            ["Year", "Type", tuition_col]
-            if "Type" in df_agg.columns
-            else ["Year", tuition_col]
+        alt.Chart(df_agg)
+        .mark_line(point=True)
+        .encode(
+            x=alt.X("Year:O", title="Year"),
+            y=alt.Y(
+                f"{tuition_col}:Q",
+                title=tuition_col,
+                scale=alt.Scale(domain=[5000, df_agg[tuition_col].max()])
+            ),
+            color=color_encoding,
+            tooltip=(
+                ["Year", "Type", tuition_col]
+                if "Type" in df_agg.columns
+                else ["Year", tuition_col]
+            )
+        )
+        .properties(
+            height=250,
+            title="Average Tuition Over Time"
         )
     )
-    .properties(
-        height=250,
-        title="Average Tuition Over Time"
-    )
-)
 
     # Repayment chart over time
     repay_chart = (
@@ -288,12 +288,14 @@ else:
             y=alt.Y(
                 "Avg Repayment Rate:Q",
                 title="Avg Repayment Rate (%)",
-                scale=alt.Scale(domain=[70, df_agg["Avg Repayment Rate"].max()])
+                scale=alt.Scale(domain=[70,
+                                        df_agg["Avg Repayment Rate"].max()])
             ),
             color=color_encoding,
-            tooltip=(["Year", "Type", "Avg Repayment Rate"]
-                    if "Type" in df_agg.columns
-                    else ["Year", "Avg Repayment Rate"])
+            tooltip=(
+                ["Year", "Type", "Avg Repayment Rate"]
+                if "Type" in df_agg.columns
+                else ["Year", "Avg Repayment Rate"])
         )
         .properties(
             height=250,

@@ -394,3 +394,35 @@ st.pydeck_chart(
         }
     )
 )
+
+low_color = salary_to_color(min_sal)
+high_color = salary_to_color(max_sal)
+
+low_rgb = f"rgb({low_color[0]}, {low_color[1]}, {low_color[2]})"
+high_rgb = f"rgb({high_color[0]}, {high_color[1]}, {high_color[2]})"
+
+st.markdown(
+    f"""
+    <div style="margin-top:20px;">
+        <b>Legend: Faculty Salary Range</b>
+        <div style="
+            height: 20px;
+            background: linear-gradient(to right, {low_rgb}, {high_rgb});
+            border: 1px solid #aaa;
+            margin-top: 5px;
+        "></div>
+        <div style="
+            display: flex;
+            justify-content: space-between;
+            font-size: 15px;
+            color: #222;
+            font-weight: 600;
+            margin-top: 4px;
+        ">
+            <span>${min_sal:,.0f}</span>
+            <span>${(min_sal+max_sal)/2:,.0f}</span>
+            <span>${max_sal:,.0f}</span>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True)

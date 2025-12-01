@@ -304,9 +304,9 @@ car_sat_summary_df = car_sat_summary_df.rename(
     columns={"carnegie_basic": "Carnegie Classification",
              "avg_sat_score": "Average SAT Score"})
 car_sat_summary_df["Average SAT Score"] = (
-    car_sat_summary_df["Average SAT Score"].map(lambda x: f"{x:,.0f}"))
+    car_sat_summary_df["Average SAT Score"].round(0))
 
-st.dataframe(car_sat_summary_df, use_container_width=True, hide_index=True)
+st.data_editor(car_sat_summary_df, use_container_width=True, hide_index=True)
 
 
 # PLOT 6

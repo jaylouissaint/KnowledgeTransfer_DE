@@ -79,7 +79,7 @@ The college scorecard database consists of two main sources of data:
         *i) YYYY represents the start year of the school year
         *ii) AA represents the end year of the school year
 
-## Using the Dashboard
+## Dashboard
 A dashbuild is built using the ingested data to assist in the analysis of different aspects of US colleges. Users can choose the year, state, and institution that they are interested in through a dynamic interface and obtain the relevant summaries and visualizations.
 
 To start the dashboard, run:

@@ -6,7 +6,11 @@ import altair as alt
 import pandas as pd
 
 
-st.title("📊 PostgreSQL Data Visualization with Streamlit")
+st.title("Colleges and Universities Data Dashboard")
+
+"""
+Data obtained from data from the Department of Education’s College Scorecard and Integrated Postsecondary Data System (IPEDS)
+"""
 
 # ---- Global filter(s) ----
 st.sidebar.header("Filters")
@@ -51,19 +55,27 @@ else:
     selected_institution_unitid = None
 
 # PLOT 1
-"""
-Summaries of how many colleges and universities are included in the data
-for the selected year, by state and type of institution (private, public,
-for-profit, and so on)
-"""
+# Summaries of how many colleges and universities are included in the data
+# for the selected year, by state and type of institution (private, public,
+# for-profit, and so on)
+
 
 most_recent_year = queries.get_most_recent_year
 max_year = utils.query_data(most_recent_year, params=())['max'].to_list()[0]
-st.subheader(f"Institutions by State and Type ({max_year})")
+st.subheader(f"Institutions by State and Type\nUpdated to most recent year: {max_year}")
 
 # Get necessary data
-inst_summary_query = queries.year_institute_summary
-df = utils.query_data(inst_summary_query, params=(max_year,))
+params = [max_year]
+
+inst_summary_query = queries.year_institute_summary_begin
+if selected_state != "":
+    inst_summary_query += " AND iped_ins.STABBR = %s"
+    params.append(selected_state)
+
+inst_summary_query += queries.year_institute_summary_end
+
+df = utils.query_data(inst_summary_query,
+                      params=params)
 
 df = df.rename(columns={
     "control": "Type",
@@ -119,8 +131,7 @@ st.dataframe(tuition_summary_df, use_container_width=True, hide_index=True)
 # PLOT 3
 st.subheader("Summary table of loan repayment performances")
 """
-A table showing the best- and worst-performing institutions
-by loan repayment rates.
+Best- and worst-performing institutions by loan repayment rates.
 """
 loan_perf_query = queries.loan_repayment_performance
 loan_df = utils.query_data(loan_perf_query, params=(selected_year,))
@@ -177,11 +188,11 @@ else:
 
 # PLOT 4
 st.subheader("Tutition rates and loan repayment rates over time")
-"""
-Graphs showing how tuition rates and loan repayment rates changed over time,
-in aggregate (such as averages for all institutions by type)
-"""
+
+# Graphs showing how tuition rates and loan repayment rates changed over time,
+# in aggregate (such as averages for all institutions by type)
 # Controls: choose aggregation level and tuition type
+
 agg_level = st.radio(
     "Aggregate by:",
     options=["All Institutions", "Institution Type (Control)"],
@@ -324,9 +335,8 @@ st.data_editor(car_sat_summary_df, use_container_width=True, hide_index=True)
 
 # PLOT 6
 st.subheader("Admission Rates and Tuition Fees")
-"""
-Scatterplot showing correlation between admission rate and tuition fees
-"""
+# Scatterplot showing correlation between admission rate and tuition fees
+
 tuition_type = st.radio(
     "Select tuition type:",
     options=["In-state", "Out-of-state"],
@@ -348,9 +358,9 @@ st.altair_chart(chart, use_container_width=True)
 
 # PLOT 7
 st.subheader("Map of Faculty Salaries")
-"""
-Map showing faculty salaries across the US
-"""
+
+# Map showing faculty salaries across the US
+
 faculty_salary_query = queries.faculty_salary_map
 map_faculty_salary_df = utils.query_data(faculty_salary_query,
                                          params=(selected_year,

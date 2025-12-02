@@ -355,13 +355,16 @@ ORDER BY INSTNM;
 """
 
 
-year_institute_summary = """
+year_institute_summary_begin = """
 SELECT sc_inst.CONTROL, iped_ins.STABBR, COUNT(*)
 FROM Institutions_IPEDS iped_ins
 LEFT JOIN Institutions sc_inst
 ON iped_ins.UNITID = sc_inst.UNITID
 WHERE iped_ins.LAST_REPORTED = %s
-GROUP BY sc_inst.CONTROL, iped_ins.STABBR;
+"""
+
+year_institute_summary_end = """
+ GROUP BY sc_inst.CONTROL, iped_ins.STABBR;
 """
 
 tuition_rate_summary = """

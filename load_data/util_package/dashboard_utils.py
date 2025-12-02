@@ -3,10 +3,8 @@ import pandas as pd
 import numpy as np
 import psycopg
 import altair as alt
-import os
-import re
 import load_data.util_package.credentials as credentials
-import load_data.util_package.logging as log
+
 
 def get_connection():
     """
@@ -39,6 +37,9 @@ def make_tuition_adm_plot(
     state_selected=None,
     tuition_type="In-state"
 ):
+    """
+    Generate the tuition-admission rate plot based on the applied filters
+    """
 
     df = df.copy()
 

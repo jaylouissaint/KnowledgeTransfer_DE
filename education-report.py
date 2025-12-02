@@ -6,10 +6,11 @@ import altair as alt
 import pandas as pd
 
 
-st.title("Colleges and Universities Data Dashboard")
+st.title("US Colleges and Universities Data Dashboard")
 
 """
-Data obtained from data from the Department of Education’s College Scorecard and Integrated Postsecondary Data System (IPEDS)
+Data obtained from the Department of Education’s College Scorecard
+and Integrated Postsecondary Data System (IPEDS)
 """
 
 # ---- Global filter(s) ----

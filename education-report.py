@@ -319,9 +319,9 @@ else:
 
 # PLOT 5
 st.subheader("Carnegie Classification and Average SAT score")
-""" Table showing the average SAT scores for colleges with
-each Carnegie Basic Classification
-"""
+# Table showing the average SAT scores for colleges with
+# each Carnegie Basic Classification
+
 car_sat_summary_query = queries.SAT_avg_carnegie
 car_sat_summary_df = utils.query_data(car_sat_summary_query)
 

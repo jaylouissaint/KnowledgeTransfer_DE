@@ -1,3 +1,6 @@
+# KnowledgeTransfer_DE
+End-to-end data engineering and analytics pipeline for U.S. higher education data, integrating IPEDS and College Scorecard with PostgreSQL and Streamlit dashboards.
+
 # College Scorecard ETL Pipeline
 This project develops an end-to-end Extract, Transform, and Load (ETL) pipeline designed to ingesting messy, unstructured higher-education data and producing a clean, well-structured SQL database for analysis. The pipeline processes annual data from two major U.S Department of Education sources: 
 1. Department of Education's Colledge Scorecard - provides detailed performance metrics for colleges and universities across the United States, updated annually. 
